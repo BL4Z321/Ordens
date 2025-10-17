@@ -73,6 +73,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
+    'core.middleware.RestrictAminAccessMiddleware'
 ]
 
 ROOT_URLCONF = 'core.urls'

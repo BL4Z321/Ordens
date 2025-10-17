@@ -7,11 +7,13 @@
 
 {% if messages %}
     {% for message in messages %}
-        <div class="alert">{{ message }}</div>
+        <section class="alert {{ message.tags }}">
+            {{ message }}
+        </section>
     {% endfor %}
 {% endif %}
 
-<form method="POST"> {% csrf_token %}
+<form action="" method="post"> {% csrf_token %}
     <div>
         <div>
             <label>Usuário: </label>
