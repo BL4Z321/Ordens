@@ -10,7 +10,7 @@ def login_view(request):
     if request.method == 'GET':
         return render(request, 'login.html')
     
-    elif request.method == 'post':
+    elif request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
@@ -28,11 +28,12 @@ def login_view(request):
                 
                 if usuario.role =='admin':
                     return redirect('/admin/')
-                elif usuario.role == 'gestor':
+                elif usuario.role == 'gestor' or usuario.role == 'Gestor':
                     return redirect('gestor')
                 elif usuario.role == 'operador':
                     return redirect('operador')
                 else:
+                    print(usuario.role)
                     return redirect('viewer')
             else:
                 messages.add_message(request, constants.ERROR, 'Usuário inativo. Contate o administrador.')
