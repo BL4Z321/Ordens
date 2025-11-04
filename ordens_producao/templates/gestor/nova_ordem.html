@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Adicionar Nova Ordem{% endblock title %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
+        <h2>Criar Nova Ordem de Produção</h2>
+
+        <form action="{% url "criar_ordem" %}" method="POST"> {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Código da OP</label>
+                <input type="text" name="cod_op" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Qtd Pedida</label>
+                <input type="number" name="qtd_pedida" class="form-control" min="1" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Cliente</label>
+                <input type="text" name="cliente" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Data da Entrega</label>
+                <input type="date" name="data_entrega" class="form-control" min="{{ hoje }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for valor, label in status %}
+                        <option value="{{ valor }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Prioridade</label>
+                <select name="prioridade" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for valor, label in prioridades %}
+                        <option value="{{ valor }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Obervações</label>
+                <textarea name="obs" class="form-control"></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Modelo</label>
+                <select name="modelo" class="form-control">
+                    <option value="">Selecione...</option>
+                    {% for m in modelos %}
+                        <option value="{{ m.id }}">{{ m.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div style="display: flex; justify-content: space-evenly;">
+                <button type="submit" class="btn btn-outline-success">Criar Ordem</button>
+                <a href="{% url 'listar_ordens' %}" class="btn btn-outline-danger">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock body %}

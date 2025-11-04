@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.messages import constants
-from usuarios.models import Usuario
+from usuarios.models import RoleEnum, Usuario
 
 # Create your views here.
 def login_view(request):
@@ -24,22 +24,30 @@ def login_view(request):
                 return redirect('login')
             if usuario.ativo:
                 login(request, user)
-                messages.add_message(request, constants.SUCCESS , f'Bem-vindo, {user.username}')
+                messages.add_message(request, constants.SUCCESS, f'Bem-vindo, {user.username}')
                 
-                if usuario.role =='admin':
+                if usuario.role == RoleEnum.ADMIN:
+                    if not user.is_staff:
+                        user.is_staff = True
+                        user.is_superuser = True
+                        user.save()
+
                     return redirect('/admin/')
-                elif usuario.role == 'gestor' or usuario.role == 'Gestor':
-                    return redirect('gestor')
-                elif usuario.role == 'operador':
+                
+                elif usuario.role == RoleEnum.GESTOR:
+                    return redirect('dashboard')
+                
+                elif usuario.role == RoleEnum.OPERADOR:
                     return redirect('operador')
+                
                 else:
-                    print(usuario.role)
                     return redirect('viewer')
+                
             else:
                 messages.add_message(request, constants.ERROR, 'Usuário inativo. Contate o administrador.')
                 return redirect('login')
         else:
-            messages.error(request, constants.ERROR, 'Usuário ou senha inváidos.')
+            messages.add_message(request, constants.ERROR, 'Usuário ou senha inváidos.')
             return redirect('login')
         
     return render(request, 'login.html')
@@ -47,12 +55,12 @@ def login_view(request):
 @login_required
 def sair(request):
     logout(request)
-    messages.info(request, 'Você saiu do sistema!')
+    messages.add_message(request, constants.INFO, 'Você saiu do sistema!')
     return redirect('login')
 
 @login_required
 def painel_gestor(request):
-    return render(request, 'gestor.html')
+    return render(request, 'ordens/gestor/dashboard')
 
 @login_required
 def painel_operador(request):

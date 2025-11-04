@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Visualizar Ordens{% endblock title %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+    <div style="max-width: 1800px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
+        <h2>Ordens de Produção</h2>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+        <a href="{% url 'criar_ordem' %}" class="btn btn-outline-success">+ Nova Ordem</a>
+        
+        <form action="{% url 'listar_ordens' %}" method="GET" class="mb-3" style="padding: 10px;">
+            <input type="text" name="q" placeholder="Buscar..." value="{{query}}" />
+
+            <select name="status">
+                <option value="">Todos os status</option>
+                {% for value, label in status %}
+                    <option value="{{ value }}" {% if value == status_filtro %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="prioridade">
+                <option value="">Todas as prioridades</option>
+                {% for value, label in prioridade %}
+                    <option value="{{ value }}" {% if value == prioridade_filtro %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+        </form>
+
+        <table class="table table-striped mt-4" border="1">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Pedido</th>
+                    <th>Produzido</th>
+                    <th>Cliente</th>
+                    <th>Data Inicio</th>
+                    <th>Data Conclusão</th>
+                    <th>Data Entrega</th>
+                    <th>Status</th>
+                    <th>Prioridade</th>
+                    <th>Observações</th>
+                    <th>Responsavel</th>
+                    <th>Modelo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for op in ordens %}
+                    <tr>
+                        <td>{{ op.cod_op }}</td>
+                        <td>{{ op.qtd_pedida }}</td>
+                        <td>{{ op.qtd_produzida }}</td>
+                        <td>{{ op.cliente }}</td>
+                        <td>{{ op.data_inicio }}</td>
+                        <td>{{ op.data_conclusao }}</td>
+                        <td>{{ op.data_entrega }}</td>
+                        <td>{{ op.get_status_display }}</td>
+                        <td>{{ op.get_prioridade_display }}</td>
+                        <td>{{ op.observacoes }}</td>
+                        <td>{{ op.responsavel }}</td>
+                        <td>{{ op.modelo }}</td>
+                        <td>
+                            <a href="{% url 'geditar_ordem' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
+                            <a href="{% url 'gexcluir_ordem' op.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a>
+                        </td>
+                    </tr>
+                    {% empty%}
+                    <tr>
+                        <td colspan="13" class="text-center">Nenhuma ordem cadastrada!</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if page_obj.has_other_pages %}
+            <div style="margin-top: 15PX; text-align: center;">
+                {% if page_obj.has_previous %}
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
+                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
+                        <i class="bi bi-chevron-double-left"></i>Primeiro</a>
+                    
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.previous_page_number }}
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
+                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
+                        <i class="bi bi-chevron-left"></i>Anterior</a>
+                {% endif %}
+
+                <span style="padding: 6px 12px; font-weight: bold;">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.next_page_number }}
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
+                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
+                        Próxima<i class="bi bi-chevron-right"></i></a>
+                    
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
+                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
+                        Último<i class="bi bi-chevron-double-right"></i></a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock body %}

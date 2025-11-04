@@ -18,16 +18,16 @@ class PrioridadeOPEnum(models.TextChoices):
 class OrdemProducao(models.Model):
     cod_op = models.CharField(max_length=50, unique=True)
     qtd_pedida = models.IntegerField(default=1)
-    qtd_produzida = models.IntegerField(default=0)
+    qtd_produzida = models.IntegerField(default=0, null=True, blank=True)
     cliente = models.CharField(max_length=100)
     data_criacao = models.DateField(auto_now_add=True)
-    data_inicio = models.DateField(null=False, blank=False)
-    data_conclusao = models.DateField(null=False, blank=False)
+    data_inicio = models.DateField(null=True, blank=True)
+    data_conclusao = models.DateField(null=True, blank=True)
     data_entrega = models.DateField(null=False, blank=False)
     status = models.CharField(max_length=20, choices=StatusOPEnum.choices, default=StatusOPEnum.PENDENTE)
     prioridade = models.CharField(max_length=20, choices=PrioridadeOPEnum.choices, default=PrioridadeOPEnum.MEDIA)
     observacoes = models.TextField(null=True, blank=True)
-    responsavel = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='ordens')
+    responsavel = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='ordens', null=True, blank=True)
     modelo = models.ForeignKey(Modelo, on_delete=models.CASCADE, related_name='ordens')
 
     def __str__(self):
