@@ -9,7 +9,7 @@
         {% endfor %}
     {% endif %}
     <div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
-        <h2>Criar Nova Ordem de Produção</h2>
+        <h2>Adicionar Ordem de Produção</h2>
 
         <form action="{% url "criar_ordem" %}" method="POST"> {% csrf_token %}
             <div class="mb-3">

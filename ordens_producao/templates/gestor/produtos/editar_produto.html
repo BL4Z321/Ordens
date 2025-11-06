@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Editar Produto{% endblock title %}
+{% block body %}
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
+    <h1>Editar Ordem: <i> {{ produto.modelo }}</i></h1>
+
+    <form method="POST">{% csrf_token %}
+        <label class="form-label">Modelo</label>
+        <input type="text" class="form-control" name="modelo" value="{{ produto.modelo }}">
+
+        <br>
+
+        <label class="form-label">Tipo</label>
+        <select name="tipo" class="form-select">
+            {% for value, label in tipos %}
+                <option value="{{ value }}" {% if value == produto.tipo %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <label class="form-label">Tecnologia</label>
+        <select name="tecnologia" class="form-select">
+            {% for value, label in tecnologias %}
+                <option value="{{ value }}" {% if value == produto.tecnologia %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <label class="form-label">Descrição</label>
+        <textarea name="descricao" class="form-control">{{ produto.descricao }}</textarea>
+
+        <br>
+
+        <label class="form-label">Quantidade</label>
+        <input type="number" name="qtd" class="form-control" value="{{ produto.qtd_estoque_atual }}">
+
+        <br>
+
+        <label class="form-label">Ativo</label>
+        <select name="ativo" class="form-select">
+            {% for value, label in ativos %}
+                <option value="{{ value }}" {% if value == produto.ativo %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <label class="form-label">Fornecedor</label>
+        <select name="fornecedor" class="form-select">
+            {% for f in fornecedores %}
+                <option value="{{ f.id }}" {% if f == produto.fornecedores %}selected{% endif %}>{{ f.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <div style="display: flex; justify-content: space-evenly;">
+            <button type="submit" class="btn btn-outline-success">Salvar</button>
+            <a href="{% url 'listar_produtos' %}" class="btn btn-outline-danger">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock body %}

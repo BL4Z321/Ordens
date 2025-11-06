@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
     path('usuarios/', include('usuarios.urls')),
-    path('ordens/', include('ordens_producao.urls')),
+    path('op/', include('ordens_producao.urls')),
 
     # path('', auth_views.LoginView.as_view(template_name='usuarios/login/'), name='login')
 ]

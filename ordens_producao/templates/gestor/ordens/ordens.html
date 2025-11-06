@@ -11,7 +11,7 @@
     <div style="max-width: 1800px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
         <h2>Ordens de Produção</h2>
         <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
-        <a href="{% url 'criar_ordem' %}" class="btn btn-outline-success">+ Nova Ordem</a>
+        <a href="{% url 'criar_ordem' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Nova Ordem</a>
         
         <form action="{% url 'listar_ordens' %}" method="GET" class="mb-3" style="padding: 10px;">
             <input type="text" name="q" placeholder="Buscar..." value="{{query}}" />
@@ -80,7 +80,7 @@
         </table>
 
         {% if page_obj.has_other_pages %}
-            <div style="margin-top: 15PX; text-align: center;">
+            <div style="margin-top: 15px; text-align: center;">
                 {% if page_obj.has_previous %}
                     <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
                             {% if query %}&q={{ query }}{% endif %}

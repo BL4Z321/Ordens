@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Adicionar Novo Produto{% endblock title %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+    
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
+        <h2>Adicionar Produto</h2>
+
+        <form action="{% url 'criar_produto' %}" method="POST"> {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Modelo</label>
+                <input type="text" name="modelo" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tipo</label>
+                <select name="tipo" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for valor, label in tipos %}
+                        <option value="{{ valor }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tecnologia</label>
+                <select name="tecnologia" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for valor, label in tecnologias %}
+                        <option value="{{ valor }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <textarea name="descricao" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Quantidade</label>
+                <input type="number" name="qtd" class="form-control" min='1' required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ativo</label>
+                <select name="ativo" class="form-select">
+                    <option value="">Selecione...</option>
+                    {% for value, label in ativos %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fornecedor</label>
+                <select name="fornecedor" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for f in fornecedores %}
+                        <option value="{{ f.id }}">{{ f.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; justify-content: space-evenly;">
+                <button type="submit" class="btn btn-outline-success">Criar Ordem</button>
+                <a href="{% url 'listar_produtos' %}" class="btn btn-outline-danger">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock body %}

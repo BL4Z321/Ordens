@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Editar Ordem{% endblock title %}
 {% block body %}
-<div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
+<div style="max-width: 700px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
     <h1>Editar Ordem: <i>{{ ordem.cod_op }}</i></h1>
     
     <form method="POST"> {% csrf_token %}
@@ -9,7 +9,7 @@
         <input type="number" class="form-control" name="qtd_pedida" value="{{ ordem.qtd_pedida }}">
 
         <br>
-
+        
         <label class="form-label">Cliente</label>
         <input type="text" class="form-control" name="cliente" value="{{ ordem.cliente }}">
 
@@ -23,7 +23,7 @@
         <label class="form-label">Status</label>
         <select name="status" class="form-select">
             {% for value, label in status %}
-                <option value="{{ value }}" {% if value == ordem.status %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ value}}" {% if value == ordem.status %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 
@@ -45,17 +45,17 @@
 
         <label class="form-label">Modelo</label>
         <select name="modelo" class="form-select">
-            {% for modelo in modelos %}
-                <option value="{{ modelo.id }}" {% if modelo == ordem.modelo %}selected{% endif %}> {{ modelo.nome }}</option>
+            {% for m in modelos %}
+                <option value="{{ m.id }}" {% if m == ordem.modelo %}selected{% endif %}> {{ m.nome }}</option>
             {% endfor %}
         </select>
 
         <br>
 
         <div style="display: flex; justify-content: space-evenly;">
-                <button type="submit" class="btn btn-outline-success">Salvar</button>
-                <a href="{% url 'listar_ordens' %}" class="btn btn-outline-danger">Cancelar</a>
-            </div>
+            <button type="submit" class="btn btn-outline-success">Salvar</button>
+            <a href="{% url 'listar_ordens' %}" class="btn btn-outline-danger">Cancelar</a>
+        </div>
     </form>
 </div>
 {% endblock body %}
