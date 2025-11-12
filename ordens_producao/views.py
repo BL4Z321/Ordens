@@ -1,6 +1,4 @@
-from http.client import HTTPResponse
 from expedicao.models import Expedicao, ExpedicaoEnum
-from fornecedores.models import Fornecedore
 from insumos.models import Insumo
 from modelos_customizados.models import Modelo
 from ordens_producao.models import OrdemProducao, PrioridadeOPEnum, StatusOPEnum

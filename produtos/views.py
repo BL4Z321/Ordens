@@ -77,7 +77,6 @@ def criar_produto(request):
             ativo=ativo,
             fornecedor_id=fornecedor
         )
-
         messages.add_message(request, constants.SUCCESS, f'Produto {modelo} criado com sucesso!')
         return redirect('listar_produtos')
     

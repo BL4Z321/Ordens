@@ -7,7 +7,7 @@
 
     <form method="POST" style="display:inline-flex; justify-content: space-evenly; padding: 20px;"> {% csrf_token %}
         <button type="submit" class="btn btn-outline-danger">Sim, excluir</button>
-        <a href="{% url "listar_produtos" %}" class="btn btn-outline-primary">Cancelar</a>
+        <a href="{% url 'listar_produtos' %}" class="btn btn-outline-primary">Cancelar</a>
     </form>
 </div>
 {% endblock body %}

@@ -2,7 +2,7 @@
 {% block title %}Editar Produto{% endblock title %}
 {% block body %}
 <div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
-    <h1>Editar Ordem: <i> {{ produto.modelo }}</i></h1>
+    <h1>Editar Produto: <i> {{ produto.modelo }}</i></h1>
 
     <form method="POST">{% csrf_token %}
         <label class="form-label">Modelo</label>
