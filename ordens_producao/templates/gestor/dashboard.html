@@ -13,7 +13,7 @@
             <h1>Dashboard</h1>
             <div style="display: flex; justify-content: space-between;">
                 <p>Bem-vindo, <strong>{{ usuario.user.username }}!</strong></p>
-                <a href="{% url "login" %}" class="btn btn-outline-danger">Sair</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-danger">Sair</a>
             </div>
         </div>
         
@@ -39,7 +39,7 @@
             <br>
 
             <h2>Insumos</h2>
-            <a href="#" class="btn btn-outline-primary">Ver Insumos</a>
+            <a href="{% url 'listar_insumos' %}" class="btn btn-outline-primary">Ver Insumos</a>
             
             <div style="background: #dc3545; color: white; padding: 20px; border-radius: 8px;">
                 <h3>Insumos em Falta</h3>

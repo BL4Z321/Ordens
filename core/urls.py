@@ -25,6 +25,7 @@ urlpatterns = [
     path('op/', include('ordens_producao.urls')),
     path('prod/', include('produtos.urls')),
     path('modelos/', include('modelos_customizados.urls')),
+    path('insumos/', include('insumos.urls')),
 
     path('', usuarios_view.login_view, name='home')
 ]
