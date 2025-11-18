@@ -11,4 +11,24 @@ def listar_expedicao(request):
     if usuario.role != RoleEnum.GESTOR:
         return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor!'})
 
-# Create your views here.
+    query = request.GET.get('q', '')
+    status_filtro = request.GET.get('status', '')
+
+    expedicoes = Expedicao.objects.all().order_by('-criado_em')
+
+    if query:
+        expedicoes = expedicoes.filter(
+            Q(destino__icontains=query)
+        )
+
+    if status_filtro:
+        expedicoes = expedicoes.filter(status=status_filtro)
+
+    contexto = {
+        'expedicoes': expedicoes,
+        'query': query,
+        'status_filtro': status_filtro,
+        'status':  ExpedicaoEnum.choices,
+    }
+
+    return render(request, 'gestor/expedicoes.html', contexto)
