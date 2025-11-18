@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{%block title %}Editar Insumos{% endblock %}
+{% block body %}
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top:10vh;">
+    <h1>Editar Insumos: <i>{{ insumo.nome }}</i></h1>
+
+    <form method="POST">{% csrf_token %}
+        <label class="form-label">Nome</label>
+        <input type="text" name="nome" class="form-control" value="{{ insumo.nome }}">
+
+        <br>
+
+        <label class="form-label">Tipo</label>
+        <select name="tipo" class="form-select">
+            {% for value, label in tipos %}
+                <option value="{{ value }}" {% if value == insumo.tipo %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <label class="form-label">Quantidade</label>
+        <input type="number" name="qtd" class="form-control" value="{{ insumo.estoque_atual }}">
+
+        <br>
+
+        <label class="form-label">Unidade de Medida</label>
+        <input type="text" name="um" class="form-control" value="{{ insumo.unidade_medida }}">
+
+        <br>
+
+        <label class="form-label">Ativo</label>
+        <select name="ativo" class="form-select">
+            {% for value, label in ativos %}
+                <option value="{{ value }}" {% if value == produto.ativo %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <div style="display: flex; justify-content: space-evenly;">
+            <button type="submit" class="btn btn-outline-success">Salvar</button>
+            <a href="{% url 'listar_insumos' %}" class="btn btn-outline-danger">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

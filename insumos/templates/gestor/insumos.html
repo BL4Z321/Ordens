@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{%block title %}Listar Insumos{% endblock %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
+        <h2>Listar Insumos</h2>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+        <a href="{% url 'criar_insumo' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Novo Insumo</a>
+
+        <form action="{% url 'listar_insumos' %}" method="get" class="mb-3" style="padding: 10px"> {% csrf_token %}
+            <input type="text" name="q" placeholder="Buscar..." value="{{ query }}">
+
+            <select style="width: 200px; height: 30px; font-size: 16px;" name="tipo">
+                <option value="">Todos os Tipos</option>
+                {% for value, label in tipo %}
+                    <option value="{{ value }}" {% if value == tipo_filtro %}selected{%endif%}>{{ label }}</option>
+                {%endfor%}
+            </select>
+
+            <select style="width: 200px; height: 30px; font-size: 16px;" name="ativo">
+                <option value="">Todos os Ativos</option>
+                {% for value, label in ativos %}
+                    <option value="{{ value }}" {% if value == ativo_filtro %}selected{% endif %}>{{ label }}</option>
+                {%endfor%}
+            </select>
+
+            <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+        </form>
+
+        <table class="table table-striped mt-4" border="1">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Unidade de medida</th>
+                <th>Ativo</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for in in insumos %}
+                    <tr>
+                        <td>{{ in.nome }}</td>
+                        <td>{{ in.get_tipo_display }}</td>
+                        <td>{{ in.estoque_atual }}</td>
+                        <td>{{ in.unidade_medida }}</td>
+                        <td>{% if in.ativo %}Sim{% else %}Não{% endif %}</td>
+                        <td>
+                            <a href="{% url 'editar_insumo' in.id %}" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></a> |
+                            <a href="{% url 'excluir_insumo' in.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Nenhum insumo cadastrado!</td>
+                    </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+
+        {% if page_obj.has_other_pages %}
+            <div style="margin-top: 15px; text-align: center;">
+                {% if page_obj.has_previous %}
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1"
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
+                        <i class="bi bi-chevron-double-left"></i>Primeira</a>
+
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.previous_page_number }}"
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
+                            <i class="bi bi-chevron-left"></i>Anterior</a>
+                {% endif %}
+
+                <span style="padding: 6px 12px; font-weight: bold;">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.next_page_number }}"
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
+                        Próxima<i class="bi bi-chevron-right"></i></a>
+
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.paginator.num_pages }}"
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
+                        Última <i class="bi bi-chevron-double-right"></i></a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

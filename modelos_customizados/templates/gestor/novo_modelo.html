@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Adicionar Novo Modelo{% endblock title %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
+        <h2>Adicionar Modelo</h2>
+
+        <form action="{% url 'criar_modelo' %}" method="POST"> {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Nome</label>
+                <select class="form-select" name="nome" required>
+                    <option value="">Selecione</option>
+                    {% for value, label in nome %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <textarea name="descricao" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ativo</label>
+                <select class="form-select" name="ativo">
+                    <option value="">Selecione</option>
+                    {% for value, label in ativos %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Produtos</label>
+                <select class="form-select" name="produto">
+                    <option value="">Selecione</option>
+                    {% for pro in produtos %}
+                        <option value="{{ pro.id }}">{{ pro.modelo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; justify-content: space-evenly;">
+                <button type="submit" class="btn btn-outline-primary">Criar Modelo</button>
+                <a class="btn btn-outline-danger" href="{% url 'listar_modelos' %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock body %}

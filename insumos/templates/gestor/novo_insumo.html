@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Adicionar Novo Insumo{% endblock title %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
+        <h2>Novo Insumo</h2>
+
+        <form action="{% url 'criar_insumo' %}" method="POST"> {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">None</label>
+                <input class="form-control" type="text" name="nome" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tipo</label>
+                <select name="tipo" class="form-select" required>
+                    <option value="">Selecione...</option>
+                    {% for value, label in tipos %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Quantidade</label>
+                <input class="form-control" type="number" name="qtd" required>
+            </div>
+
+            <div class="mb-3">
+               <label class="form-label">Unidade de Medida</label>
+                <input type="text" name="um" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ativo</label>
+                <select name="ativo" class="form-select">
+                    <option value="">Selecione...</option>
+                    {% for value, label in ativos %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; justify-content: space-evenly;">
+                <button type="submit" class="btn btn-outline-success">Adicionar</button>
+                <a class="btn btn-outline-danger" href="{% url 'listar_insumos' %}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+{% endblock body %}

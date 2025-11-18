@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Excluir Modelo{% endblock title %}
+{% block body %}
+<div style="display: grid; justify-content: center; margin-top: 400px;">
+    <h1>Excluir Modelo</h1>
+    <p>Tem certeza que deseja excluir o modelo <strong>{{ modelo.nome }}</strong>?</p>
+
+    <form method="POST" style="display:inline-flex; justify-content: space-evenly; padding: 20px;"> {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger">Sim, excluir</button>
+        <a href="{% url 'listar_modelos' %}" class="btn btn-outline-primary">Cancelar</a>
+    </form>
+</div>
+{% endblock body %}
