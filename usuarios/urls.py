@@ -9,5 +9,6 @@ urlpatterns = [
     path('gestor/', views.painel_gestor , name='gestor'),
     path('operador/', views.painel_operador, name='operador'),
     path('viewer/', views.painel_viewer, name='viewer'),
+    path('gestor/dashboard/', views.dashboard, name='dashboard'),
 
 ]

@@ -28,5 +28,5 @@ urlpatterns = [
     path('insumos/', include('insumos.urls')),
     path('expedicao/', include('expedicao.urls')),
 
-    path('', usuarios_view.login_view, name='home')
+    path('', usuarios_view.login_view, name='login')
 ]

@@ -14,53 +14,6 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 
 @login_required
-def dashboard(request):
-    usuario = Usuario.objects.get(user=request.user)
-
-    if usuario.role != RoleEnum.GESTOR:
-        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor.'})
-    
-    total_ordens = OrdemProducao.objects.count()
-    ordens_ativas = OrdemProducao.objects.filter(status=StatusOPEnum.EM_PRODUCAO).count()
-    ordens_concluidas = OrdemProducao.objects.filter(status=StatusOPEnum.CONCLUIDA).count()
-    ordens_pendentes = OrdemProducao.objects.filter(status=StatusOPEnum.PENDENTE).count()
-    ordens_canceladas = OrdemProducao.objects.filter(status=StatusOPEnum.CANCELADA).count()
-    
-    produtos_disponiveis = Produto.objects.count()
-    
-    modelos_custom = Modelo.objects.count()
-    
-    insumos_baixos = Insumo.objects.filter(estoque_atual__lt=5).count()
-    
-    expedicao = Expedicao.objects.count()
-    expedi_transporte = Expedicao.objects.filter(status=ExpedicaoEnum.EM_TRANSPORTE).count()
-    expedi_entregue = Expedicao.objects.filter(status=ExpedicaoEnum.ENTREGUE).count()
-    expedi_retornado = Expedicao.objects.filter(status=ExpedicaoEnum.RETORNADO).count()
-    expedi_enviado = Expedicao.objects.filter(status=ExpedicaoEnum.ENVIADO).count()
-    expedi_pendente = Expedicao.objects.filter(status=ExpedicaoEnum.PENDENTE).count()
-
-    contexto = {
-        'usuario': usuario,
-        'total_ordens': total_ordens,
-        'ordens_ativas': ordens_ativas,
-        'ordens_concluidas': ordens_concluidas,
-        'ordens_pendentes': ordens_pendentes, 
-        'ordens_canceladas': ordens_canceladas,
-        'produtos_disponiveis': produtos_disponiveis,
-        'modelos_custom': modelos_custom,
-        'insumos_baixos': insumos_baixos,
-        'expedicao': expedicao,
-        'expedi_transporte': expedi_transporte,
-        'expedi_entregue': expedi_entregue,
-        'expedi_retornado': expedi_retornado,
-        'expedi_enviado': expedi_enviado,
-        'expedi_pendente': expedi_pendente,
-    }
-
-    return render(request, 'gestor/dashboard.html', contexto)
-
-# CRUD das Ordens - OK
-@login_required
 def criar_ordem(request):
     usuario = Usuario.objects.get(user=request.user)
     modelos = Modelo.objects.all()
@@ -103,7 +56,7 @@ def criar_ordem(request):
         'status': StatusOPEnum.choices,
         'hoje': date.today().isoformat()
     }
-    return render(request, 'gestor/ordens/nova_ordem.html', contexto)
+    return render(request, 'gestor/nova_ordem.html', contexto)
     
 @login_required
 def listar_ordens(request):
@@ -143,7 +96,7 @@ def listar_ordens(request):
         'status': StatusOPEnum.choices,
         'prioridade': PrioridadeOPEnum.choices
     }
-    return render(request, 'gestor/ordens/ordens.html', contexto)
+    return render(request, 'gestor/ordens.html', contexto)
 
 @login_required
 def editar_ordem(request, pk):
@@ -171,7 +124,7 @@ def editar_ordem(request, pk):
         'hoje': date.today().isoformat()
     }
 
-    return render(request, 'gestor/ordens/editar_ordem.html', contexto)
+    return render(request, 'gestor/editar_ordem.html', contexto)
 
 @login_required
 def excluir_ordem(request, pk):
@@ -182,4 +135,4 @@ def excluir_ordem(request, pk):
         messages.add_message(request, constants.SUCCESS, 'Ordem de Produção excluída com sucesso!')
         return redirect('listar_ordens')
 
-    return render(request, 'gestor/ordens/excluir_ordem.html', {'ordem': ordem})
+    return render(request, 'gestor/excluir_ordem.html', {'ordem': ordem})
