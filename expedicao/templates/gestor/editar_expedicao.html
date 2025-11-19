@@ -1,1 +1,52 @@
-Olá
+{% extends 'base.html' %}
+{%block title %}Editar Expedição{% endblock %}
+{% block body %}
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; margin-top:10vh;">
+    <h1>Editar Expedição: <i>{{ expedicao.ordem.cod_op }}</i></h1>
+    <form method="POST"> {% csrf_token %}
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+            {% for value, label in status %}
+                <option value="{{ value }}" {% if value == expedicao.status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <label class="form-label">Destino</label>
+        <input class="form-control" type="text" name="destino" value="{{ expedicao.destino }}">
+
+        <br>
+
+        <label class="form-label">Data de Envio</label>
+        <input class="form-control" type="date" name="data_envio" value="{{ expedicao.data_envio }}">
+
+        <br>
+
+        <label class="form-label">Data de Entrega</label>
+        <input class="form-control" type="date" name="data_entrega" value="{{ expedicao.data_entrega }}">
+
+        <br>
+
+        <label class="form-label">Transportadora</label>
+        <input class="form-control" type="text" name="transportadora" value="{{ expedicao.transportadora }}">
+
+        <br>
+
+        <label class="form-label">Código de Rastreio</label>
+        <input class="form-control" type="text" name="cod_rastreio" value="{{ expedicao.cod_rastreio }}">
+
+        <br>
+
+        <label class="form-label">Observações</label>
+        <textarea class="form-control" name="observacoes">{{ expedicao.observacoes }}</textarea>
+
+        <br>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+            <button type="submit" class="btn btn-outline-success">Salvar</button>
+            <a href="{% url 'listar_expedicoes' %}" class="btn btn-outline-danger">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock body %}
