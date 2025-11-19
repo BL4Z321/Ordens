@@ -26,6 +26,7 @@ urlpatterns = [
     path('prod/', include('produtos.urls')),
     path('modelos/', include('modelos_customizados.urls')),
     path('insumos/', include('insumos.urls')),
+    path('expedicao/', include('expedicao.urls')),
 
     path('', usuarios_view.login_view, name='home')
 ]

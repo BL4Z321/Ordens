@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 from django.contrib.messages import constants
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -58,7 +57,7 @@ INSTALLED_APPS = [
     'insumos',
     'modelos_customizados',
     'ordens_producao',
-    'expedicao',
+    'expedicao.apps.ExpedicaoConfig',
     'estoque'
 ]
 

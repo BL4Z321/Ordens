@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Visualizar Expedições{% endblock title %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+    <div style="max-width: 1800px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
+        <h2>Expedições</h2>
+        <form action="{% url 'listar_expedicoes' %}" method="GET" class="mb-3" style="padding: 10px;">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+
+            <input type="text" name="q" placeholder="Buscar..." value="{{ query }}" />
+
+            <select name="status">
+                <option value="">Todos os status</option>
+                {% for value, label in status %}
+                    <option value="{{ value }}" {% if value == status_filtro %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+        </form>
+
+        <table class="table table-striped mt-4" border="1">
+            <thead>
+                <tr>
+                    <th>Ordem</th>
+                    <th>Status</th>
+                    <th>Destino</th>
+                    <th>Data de Envio</th>
+                    <th>Data de Entrega</th>
+                    <th>Transportadora</th>
+                    <th>Código de Rastreio</th>
+                    <th>Quantidade Enviada</th>
+                    <th>Observações</th>
+                    <th>Criado em</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in expedicoes %}
+                <tr>
+                    <td>{{ e.ordem.cod_op }}</td>
+                    <td>{{ e.get_status_display }}</td>
+                    <td>{{ e.destino }}</td>
+                    <td>{{ e.data_envio }}</td>
+                    <td>{{ e.data_entrega }}</td>
+                    <td>{{ e.transportadora }}</td>
+                    <td>{{ e.cod_rastreio }}</td>
+                    <td>{{ e.qtd_enviada }}</td>
+                    <td>{{ e.observacoes }}</td>
+                    <td>{{ e.criado_em }}</td>
+                    <td>
+                        <a href="{% url 'editar_expedicao' e.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
+                    </td>
+                </tr>
+                {% empty%}
+                    <tr>
+                        <td colspan="11" class="text-center">Nenhuma ordem cadastrada!</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if page_obj.has_other_pages %}
+            <div style="margin-top: 15px; text-align: center;">
+                {% if page_obj.has_previous %}
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}">
+                        <i class="bi bi-chevron-double-left"></i>Primeiro</a>
+
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.previous_page_number }}
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}">
+                        <i class="bi bi-chevron-left"></i>Anterior</a>
+                {% endif %}
+
+                <span style="padding: 6px 12px; font-weight: bold;">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.next_page_number }}
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}">
+                        Próxima<i class="bi bi-chevron-right"></i></a>
+
+                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
+                            {% if query %}&q={{ query }}{% endif %}
+                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}">
+                        Último<i class="bi bi-chevron-double-right"></i></a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock body %}
