@@ -18,6 +18,17 @@
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px;">
+
+            <h2>Estoque</h2>
+            <a href="{% url 'listar_estoque' %}" class="btn btn-outline-primary">Ver estoque</a>
+
+            <div style="background: #007bff; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Estoque</h3>
+                <p style="font-size: 2em;"> {{ estoque }}</p>
+            </div>
+
+            <br>
+
             <h2>Produtos</h2>
             <a href="{% url 'listar_produtos' %}" class="btn btn-outline-primary">Ver Produtos</a>
             

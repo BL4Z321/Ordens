@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.messages import constants
 
+from estoque.models import ModeloInsumo
 from expedicao.models import Expedicao, ExpedicaoEnum
 from insumos.models import Insumo
 from modelos_customizados.models import Modelo
@@ -103,6 +104,8 @@ def dashboard(request):
     expedi_enviado = Expedicao.objects.filter(status=ExpedicaoEnum.ENVIADO).count()
     expedi_pendente = Expedicao.objects.filter(status=ExpedicaoEnum.PENDENTE).count()
 
+    estoque = ModeloInsumo.objects.count()
+
     contexto = {
         'usuario': usuario,
         'total_ordens': total_ordens,
@@ -119,6 +122,7 @@ def dashboard(request):
         'expedi_retornado': expedi_retornado,
         'expedi_enviado': expedi_enviado,
         'expedi_pendente': expedi_pendente,
+        'estoque': estoque,
     }
 
     return render(request, 'gestor/dashboard.html', contexto)
