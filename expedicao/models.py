@@ -10,7 +10,7 @@ class ExpedicaoEnum(models.TextChoices):
     PENDENTE = 'pendente', 'Pendente'
 
 class Expedicao(models.Model):
-    ordem = models.OneToOneField(OrdemProducao, on_delete=models.CASCADE, related_name='expedicoes')
+    ordem = models.OneToOneField(OrdemProducao, on_delete=models.CASCADE, related_name='expedicao')
     status = models.CharField(max_length=20, choices=ExpedicaoEnum.choices, default=ExpedicaoEnum.PENDENTE)
     destino = models.CharField(max_length=255, null=True, blank=True)
     data_envio = models.DateField(blank=True, null=True)

@@ -1,4 +1,6 @@
 from django.db import models
+
+from insumos.models import Insumo
 from modelos_customizados.models import Modelo
 from usuarios.models import Usuario
 
@@ -17,7 +19,7 @@ class PrioridadeOPEnum(models.TextChoices):
 
 class OrdemProducao(models.Model):
     cod_op = models.CharField(max_length=50, unique=True)
-    qtd_pedida = models.IntegerField(default=1)
+    qtd_pedida = models.DecimalField(max_digits=10, decimal_places=2, default=1)
     qtd_produzida = models.IntegerField(default=0, null=True, blank=True)
     cliente = models.CharField(max_length=100)
     data_criacao = models.DateField(auto_now_add=True)
@@ -32,4 +34,14 @@ class OrdemProducao(models.Model):
 
     def __str__(self):
         return f'OP {self.cod_op} - {self.modelo.nome}'
-    
+
+class OPInsumo(models.Model):
+    op = models.ForeignKey(OrdemProducao, on_delete=models.CASCADE, related_name='insumos_previstos')
+    insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE)
+    qtd_necessaria_por_unidade = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    qt_total_prevista = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    qtd_baixada = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    data_registro = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f'OP {self.op.cod_op} - {self.insumo.nome}'

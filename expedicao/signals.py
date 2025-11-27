@@ -24,11 +24,9 @@ def gerenciar_expedicao(sender, instance, created, **kwargs):
     old_status = getattr(instance, "_old_status", None)
     new_status = instance.status
 
-    # -----------------------------------------
-    # 1) SE OP VIROU CONCLUIDA → CRIA EXPEDIÇÃO
-    # -----------------------------------------
+    # (1) Criar expedição quando virar CONCLUÍDA
     if new_status == StatusOPEnum.CONCLUIDA:
-        if not hasattr(instance, "expedicao"):
+        if not Expedicao.objects.filter(ordem=instance).exists():
             Expedicao.objects.create(
                 ordem=instance,
                 status=ExpedicaoEnum.PENDENTE,
@@ -38,9 +36,8 @@ def gerenciar_expedicao(sender, instance, created, **kwargs):
             )
         return
 
-    # -----------------------------------------
-    # 2) SE A OP SAIU DE CONCLUIDA → DELETA EXPEDIÇÃO
-    # -----------------------------------------
+    # (2) Excluir expedição quando SAIR de CONCLUÍDA
     if old_status == StatusOPEnum.CONCLUIDA and new_status != StatusOPEnum.CONCLUIDA:
-        if hasattr(instance, "expedicao"):
-            instance.expedicao.delete()
+        exp = Expedicao.objects.filter(ordem=instance).first()
+        if exp:
+            exp.delete()

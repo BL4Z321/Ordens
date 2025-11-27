@@ -10,7 +10,7 @@ class TipoInsumoEnum(models.TextChoices):
 class Insumo(models.Model):
     nome = models.CharField(max_length=100)
     tipo = models.CharField(max_length=20, choices=TipoInsumoEnum.choices)
-    estoque_atual = models.IntegerField(default=0)
+    estoque_atual = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     unidade_medida = models.CharField(max_length=20)
     ativo = models.BooleanField(default=True)
 
