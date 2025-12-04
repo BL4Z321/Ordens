@@ -6,4 +6,5 @@ urlpatterns = [
     path('gestor/criar_ordem/', views.criar_ordem, name='criar_ordem'),
     path('gestor/editar_ordem/<int:pk>/', views.editar_ordem, name='geditar_ordem'),
     path('gestor/excluir_ordem/<int:pk>/', views.excluir_ordem, name='gexcluir_ordem'),
+    path('gestor/detalhes_ordem/<int:pk>/', views.detalhes_ordem, name='detalhes_ordem'),
 ]

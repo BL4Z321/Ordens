@@ -1,7 +1,9 @@
+from django.core.exceptions import ValidationError
+
 from expedicao.models import Expedicao, ExpedicaoEnum
 from insumos.models import Insumo
 from modelos_customizados.models import Modelo
-from ordens_producao.models import OrdemProducao, PrioridadeOPEnum, StatusOPEnum
+from ordens_producao.models import OrdemProducao, PrioridadeOPEnum, StatusOPEnum, OPInsumo, OPProduto
 from produtos.models import Produto
 from usuarios.models import RoleEnum, Usuario
 
@@ -17,7 +19,7 @@ from django.core.paginator import Paginator
 def criar_ordem(request):
     usuario = Usuario.objects.get(user=request.user)
     modelos = Modelo.objects.all()
-    
+
     if usuario.role != RoleEnum.GESTOR:
         return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor.'})
 
@@ -26,30 +28,40 @@ def criar_ordem(request):
         qtd_pedida = request.POST.get('qtd_pedida')
         cliente = request.POST.get('cliente')
         data_entrega = request.POST.get('data_entrega')
-        status = request.POST.get('status')
         prioridade = request.POST.get('prioridade')
         observacoes = request.POST.get('obs')
         modelo_id = request.POST.get('modelo')
 
-        if not all([cod_op, qtd_pedida, cliente, data_entrega, status, prioridade, modelo_id]):
+        if not all([cod_op, qtd_pedida, cliente, data_entrega, prioridade, modelo_id]):
             messages.add_message(request, constants.ERROR, 'Preencha todos os campos obrigatórios!')
             return redirect('criar_ordem')
 
         modelo = Modelo.objects.get(id=modelo_id)
 
-        OrdemProducao.objects.create(
-            cod_op=cod_op,
-            qtd_pedida=qtd_pedida,
-            cliente=cliente,
-            data_entrega=data_entrega,
-            status=status,
-            prioridade=prioridade,
-            observacoes=observacoes,
-            modelo=modelo,
-        )
-        messages.add_message(request, constants.SUCCESS, f'Ordem {cod_op} criada com sucesso!')
+        if qtd_pedida > Produto.qtd_estoque_atual:
+            messages.add_message(request, constants.ERROR, f'Estoque de produtos {Produto.modelo} mais baixo!')
+            return redirect('listar_ordem')
+
+        status_inicial = StatusOPEnum.PENDENTE
+        try:
+            OrdemProducao.objects.create(
+                cod_op=cod_op,
+                qtd_pedida=qtd_pedida,
+                cliente=cliente,
+                data_entrega=data_entrega,
+                status=status_inicial,
+                prioridade=prioridade,
+                observacoes=observacoes,
+                modelo=modelo,
+            )
+            messages.add_message(request, constants.SUCCESS, f'Ordem {cod_op} criada com sucesso!')
+
+        except ValidationError as ve:
+            messages.add_message(request, constants.ERROR, ve.message)
+            return redirect('listar_ordens')
+
         return redirect('listar_ordens')
-    
+
     contexto = {
         'modelos': modelos,
         'prioridades': PrioridadeOPEnum.choices,
@@ -57,7 +69,7 @@ def criar_ordem(request):
         'hoje': date.today().isoformat()
     }
     return render(request, 'gestor/nova_ordem.html', contexto)
-    
+
 @login_required
 def listar_ordens(request):
     usuario = Usuario.objects.get(user=request.user)
@@ -112,10 +124,15 @@ def editar_ordem(request, pk):
         ordem.observacoes = request.POST.get('obs')
         ordem.modelo_id = request.POST.get('modelo')
 
-        ordem.save()
-        messages.add_message(request, constants.SUCCESS, f'Ordem {ordem.cod_op} atualizada com sucesso!')
-        return redirect('listar_ordens')
-    
+        try:
+            ordem.save()
+            messages.add_message(request, constants.SUCCESS, f'Ordem {ordem.cod_op} atualizada com sucesso!')
+            return redirect('listar_ordens')
+
+        except ValidationError as ve:
+            messages.add_message(request, constants.ERROR, ve.message)
+            return redirect('listar_ordens')
+
     contexto = {
         'ordem': ordem,
         'status': StatusOPEnum.choices,
@@ -136,3 +153,18 @@ def excluir_ordem(request, pk):
         return redirect('listar_ordens')
 
     return render(request, 'gestor/excluir_ordem.html', {'ordem': ordem})
+
+@ login_required
+def detalhes_ordem(request, pk):
+    op = OrdemProducao.objects.get(id=pk)
+    insumos = OPInsumo.objects.filter(op=op).select_related('insumo')
+    produto = OPProduto.objects.filter(op=op).select_related('op_produto')
+    historico = op.historicoop_set().all().order_by('-data_criacao') if hasattr(op, 'historicoop_set') else []
+
+    contexto = {
+        'op': op,
+        'insumos': insumos,
+        'produto': produto,
+        'historico': historico,
+    }
+    return render(request, 'gestor/detalhes_ordem.html', contexto)

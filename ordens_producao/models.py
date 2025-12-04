@@ -2,6 +2,7 @@ from django.db import models
 
 from insumos.models import Insumo
 from modelos_customizados.models import Modelo
+from produtos.models import Produto
 from usuarios.models import Usuario
 
 # Create your models here.
@@ -45,3 +46,12 @@ class OPInsumo(models.Model):
 
     def __str__(self):
         return f'OP {self.op.cod_op} - {self.insumo.nome}'
+
+class OPProduto(models.Model):
+    op = models.ForeignKey(OrdemProducao, on_delete=models.CASCADE, related_name='op_produto')
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    qtd_necessaria = models.IntegerField(default=1)
+    qtd_total = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'OP {self.op.cod_op} - {self.produto.modelo}'

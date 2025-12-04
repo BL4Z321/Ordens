@@ -15,6 +15,7 @@ from pathlib import Path
 from django.contrib.messages import constants
 
 import ordens_producao.apps
+import usuarios.apps
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,7 +54,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
 
     # Apps do projeto
-    'usuarios',
+    'usuarios.apps.UsuariosConfig',
     'fornecedores',
     'produtos',
     'insumos',
@@ -106,10 +107,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "OrdemProducao",
+        "NAME": "Ordem",
         "USER": "postgres",
-        "PASSWORD": "ssiot",
-        "HOST": "127.0.0.1",
+        "PASSWORD": "58F0~LF@9<kV",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }

@@ -58,16 +58,41 @@
                         <td>{{ op.qtd_pedida }}</td>
                         <td>{{ op.qtd_produzida }}</td>
                         <td>{{ op.cliente }}</td>
-                        <td>{{ op.data_inicio }}</td>
-                        <td>{{ op.data_conclusao }}</td>
+                        <td>
+                            {% if op.data_inicio %}
+                                {{ op.data_inicio }}
+                            {% else %}
+                                A definir
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if op.data_conclusao %}
+                                {{ op.data_conclusao }}
+                            {% else %}
+                                A definir
+                            {% endif %}
+                        </td>
                         <td>{{ op.data_entrega }}</td>
                         <td>{{ op.get_status_display }}</td>
                         <td>{{ op.get_prioridade_display }}</td>
-                        <td>{{ op.observacoes }}</td>
-                        <td>{{ op.responsavel }}</td>
+                        <td>
+                            {% if op.observacoes %}
+                                {{ op.observacoes }}
+                            {% else %}
+                                Nenhuma
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if op.responsavel %}
+                                {{ op.responsavel }}
+                            {% else %}
+                                Aguardando Operador
+                            {% endif %}
+                        </td>
                         <td>{{ op.modelo }}</td>
                         <td>
                             <a href="{% url 'geditar_ordem' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
+                            <a href="{% url 'detalhes_ordem' op.id %}" class=" btn btn-outline-success"><i class="bi bi-layout-text-sidebar-reverse"></i></a> |
                             <a href="{% url 'gexcluir_ordem' op.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a>
                         </td>
                     </tr>
