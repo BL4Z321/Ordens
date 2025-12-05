@@ -1,5 +1,3 @@
-from django.core.exceptions import ValidationError
-
 from expedicao.models import Expedicao, ExpedicaoEnum
 from insumos.models import Insumo
 from modelos_customizados.models import Modelo
@@ -7,6 +5,7 @@ from ordens_producao.models import OrdemProducao, PrioridadeOPEnum, StatusOPEnum
 from produtos.models import Produto
 from usuarios.models import RoleEnum, Usuario
 
+from django.core.exceptions import ValidationError
 from datetime import date
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
@@ -37,10 +36,6 @@ def criar_ordem(request):
             return redirect('criar_ordem')
 
         modelo = Modelo.objects.get(id=modelo_id)
-
-        if qtd_pedida > Produto.qtd_estoque_atual:
-            messages.add_message(request, constants.ERROR, f'Estoque de produtos {Produto.modelo} mais baixo!')
-            return redirect('listar_ordem')
 
         status_inicial = StatusOPEnum.PENDENTE
         try:
@@ -154,17 +149,17 @@ def excluir_ordem(request, pk):
 
     return render(request, 'gestor/excluir_ordem.html', {'ordem': ordem})
 
-@ login_required
+@login_required
 def detalhes_ordem(request, pk):
     op = OrdemProducao.objects.get(id=pk)
     insumos = OPInsumo.objects.filter(op=op).select_related('insumo')
-    produto = OPProduto.objects.filter(op=op).select_related('op_produto')
-    historico = op.historicoop_set().all().order_by('-data_criacao') if hasattr(op, 'historicoop_set') else []
+    op_produtos = OPProduto.objects.filter(op=op).select_related('produto')
+    historico = op.historicoop_set.all().order_by('-data_criacao') if hasattr(op, 'historicoop_set') else []
 
     contexto = {
         'op': op,
         'insumos': insumos,
-        'produto': produto,
+        'op_produtos': op_produtos,  # NOME CORRIGIDO
         'historico': historico,
     }
     return render(request, 'gestor/detalhes_ordem.html', contexto)

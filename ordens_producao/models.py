@@ -55,3 +55,23 @@ class OPProduto(models.Model):
 
     def __str__(self):
         return f'OP {self.op.cod_op} - {self.produto.modelo}'
+
+    @property
+    def status_nome(self):
+        estoque = self.produto.qtd_estoque_atual
+
+        if estoque == 0:
+            return 'Insuficiente'
+        elif estoque < self.qtd_total:
+            return 'Estoque baixo'
+        return 'Disponível'
+
+    @property
+    def status_css(self):
+        estoque = self.produto.qtd_estoque_atual
+
+        if estoque == 0:
+            return 'bg-danger'
+        elif estoque < self.qtd_total:
+            return 'bg-warning'
+        return 'bg-success'

@@ -2,6 +2,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.db.models import Sum
 from decimal import Decimal
 
 from ordens_producao.models import OrdemProducao, OPInsumo, StatusOPEnum, OPProduto
@@ -14,9 +15,14 @@ def gerar_insumos_automaticos(sender, instance, created, **kwargs):
         return
 
     estrutura = ModeloInsumo.objects.filter(modelo=instance.modelo)
+
     for item in estrutura:
         qtd = Decimal(str(item.qtd_por_unidade or 0))
         total = qtd * Decimal(instance.qtd_pedida)
+
+        if item.insumo.unidade_medida == 'metro':
+            qtd = Decimal('0.15')  # 15 cm em metros
+            total = qtd * Decimal(instance.qtd_pedida)
 
         OPInsumo.objects.create(
             op=instance,
@@ -27,19 +33,48 @@ def gerar_insumos_automaticos(sender, instance, created, **kwargs):
         )
 
 @receiver(pre_save, sender=OrdemProducao)
+def validar_estoque_global_insumos(sender, instance, **kwargs):
+    if instance.pk:
+        return
+
+    estrutura = ModeloInsumo.objects.filter(modelo=instance.modelo)
+
+    for item in estrutura:
+        insumo = item.insumo
+
+        if insumo.unidade_medida == 'metro':
+            qtd_por_un = Decimal('0.15')
+        else:
+            qtd_por_un = Decimal(str(item.qtd_por_unidade or 0))
+
+        qtd_nova_op = qtd_por_un * Decimal(instance.qtd_pedida)
+
+        total_reservado = OPInsumo.objects.filter(
+            insumo=insumo
+        ).aggregate(total=Sum('qt_total_prevista'))['total'] or Decimal('0')
+
+        estoque = Decimal(str(insumo.estoque_atual))
+        total_requirido = total_reservado + qtd_nova_op
+
+        if  total_requirido > estoque:
+            raise ValidationError(
+                f'Estoque insuficiente do insumo {insumo.nome}. '
+                f'Disponível: {estoque} | necessário: {total_requirido}'
+            )
+
+@receiver(pre_save, sender=OrdemProducao)
 def validar_estoque_antes_de_iniciar(sender, instance, **kwargs):
-    # Só valida se a ordem já existe
     if not instance.pk:
         return
 
     estado_anterior = OrdemProducao.objects.get(pk=instance.pk)
 
-    # Só checa quando está tentando mudar para EM_PRODUCAO
     if estado_anterior.status != StatusOPEnum.EM_PRODUCAO and instance.status == StatusOPEnum.EM_PRODUCAO:
+
         for item in instance.insumos_previstos.all():
             if item.insumo.estoque_atual < item.qt_total_prevista:
                 raise ValidationError(
-                    f'Insumo "{item.insumo.nome}" não possui estoque suficiente'
+                    f'Insumo "{item.insumo.nome}" não possui estoque suficiente '
                     f"({item.insumo.estoque_atual} disponível / {item.qt_total_prevista} necessário)."
                 )
 
@@ -53,12 +88,12 @@ def baixar_insumos_ao_concluir(sender, instance, **kwargs):
     estado_anterior = OrdemProducao.objects.get(pk=instance.pk)
 
     if estado_anterior.status != StatusOPEnum.CONCLUIDA and instance.status == StatusOPEnum.CONCLUIDA:
+
         for item in instance.insumos_previstos.all():
             if item.qtd_baixada > 0:
                 continue
 
             insumo = item.insumo
-
             insumo.estoque_atual -= item.qt_total_prevista
             insumo.save()
 
@@ -73,7 +108,9 @@ def estornar_insumos_se_reabrir(sender, instance, **kwargs):
         return
 
     estado_anterior = OrdemProducao.objects.get(pk=instance.pk)
+
     if estado_anterior.status == StatusOPEnum.CONCLUIDA and instance.status != StatusOPEnum.CONCLUIDA:
+
         if instance.status == StatusOPEnum.CANCELADA:
             return
 
@@ -98,25 +135,32 @@ def verificar_estoque_produto(sender, instance, **kwargs):
 
     produto = instance.modelo.produto_id
 
-    estoque = produto.qtd_estoque_atual
-    necessario = instance.qtd_pedida
+    total_em_ops = OPProduto.objects.filter(
+        produto=produto
+    ).aggregate(total=Sum('qtd_total'))['total'] or 0
 
-    if necessario > estoque:
-        raise ValueError(
+    qtd_nova = int(instance.qtd_pedida)
+    estoque = int(produto.qtd_estoque_atual)
+
+    total_requerido = total_em_ops + qtd_nova
+
+    if total_requerido > estoque:
+        raise ValidationError(
             f'Estoque insuficiente do produto {produto.modelo}. '
-            f'Necessário: {necessario}, Disponível: {estoque}.'
+            f'Disponível: {estoque} | Necessário considerando todas OPs: {total_requerido}'
         )
 
 @receiver(post_save, sender=OrdemProducao)
 def criar_op_produto(sender, instance, created, **kwargs):
     if created:
+
         produto = instance.modelo.produto_id
 
         OPProduto.objects.create(
             op=instance,
             produto=produto,
             qtd_necessaria=1,
-            qtd_total=instance.qtd_pedida,
+            qtd_total=instance.qtd_pedida
         )
 
 @receiver(post_save, sender=OrdemProducao)
@@ -125,8 +169,8 @@ def baixar_produto_estoque(sender, instance, created, **kwargs):
         return
 
     if instance.status == StatusOPEnum.CONCLUIDA:
-        op_prod = instance.op_produto
-        produto = op_prod.produto
+        op_produto = instance.op_produto.first()
+        produto = op_produto.produto
 
-        produto.qtd_estoque_atual -= op_prod.qtd_total
+        produto.qtd_estoque_atual -= op_produto.qtd_total
         produto.save()

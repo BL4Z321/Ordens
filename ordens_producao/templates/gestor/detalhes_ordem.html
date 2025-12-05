@@ -92,16 +92,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>{{ produto.produto.modelo }}</td>
-                            <td>{{ produto.produto.get_tipo_display }}</td>
-                            <td>{{ produto.produto.tecnologia }}</td>
-                            <td>{{ produto.produto.qtd_estoque_atual }}</td>
-                            <td>{{ produto.qtd_necessaria }}</td>
-                            <td>{{ produto.qtd_total }}</td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        {% for produto in op_produtos %}
+                            <tr>
+                                <td>{{ produto.produto.modelo }}</td>
+                                <td>{{ produto.produto.get_tipo_display }}</td>
+                                <td>{{ produto.produto.tecnologia }}</td>
+                                <td>{{ produto.produto.qtd_estoque_atual }}</td>
+                                <td>{{ produto.qtd_necessaria }}</td>
+                                <td>{{ produto.qtd_total }}</td>
+                                <td>
+                                    <span class="badge {{ produto.status_css }}">{{ produto.status_nome }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
