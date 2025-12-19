@@ -33,7 +33,7 @@ def gerar_insumos_automaticos(sender, instance, created, **kwargs):
         )
 
 @receiver(pre_save, sender=OrdemProducao)
-def validar_estoque_global_insumos(sender, instance, **kwargs):
+def validar_estoque_insumos(sender, instance, **kwargs):
     if instance.pk:
         return
 
@@ -57,10 +57,8 @@ def validar_estoque_global_insumos(sender, instance, **kwargs):
         total_requirido = total_reservado + qtd_nova_op
 
         if  total_requirido > estoque:
-            raise ValidationError(
-                f'Estoque insuficiente do insumo {insumo.nome}. '
-                f'Disponível: {estoque} | necessário: {total_requirido}'
-            )
+            instance.status = StatusOPEnum.BLOQUEADA
+            return
 
 @receiver(pre_save, sender=OrdemProducao)
 def validar_estoque_antes_de_iniciar(sender, instance, **kwargs):
@@ -69,7 +67,19 @@ def validar_estoque_antes_de_iniciar(sender, instance, **kwargs):
 
     estado_anterior = OrdemProducao.objects.get(pk=instance.pk)
 
-    if estado_anterior.status != StatusOPEnum.EM_PRODUCAO and instance.status == StatusOPEnum.EM_PRODUCAO:
+    if estado_anterior.status == instance.status:
+        return
+
+    if instance.status == StatusOPEnum.EM_PRODUCAO:
+        if estado_anterior.status == StatusOPEnum.BLOQUEADA:
+            raise  ValidationError(
+                'OP bloqueada por falta de estoque. Regularize antes de iniciar a produção.'
+            )
+
+        if estado_anterior.status in [StatusOPEnum.CANCELADA, StatusOPEnum.CONCLUIDA]:
+            raise ValidationError(
+                'Não é possível iniciar produção para esta OP.'
+            )
 
         for item in instance.insumos_previstos.all():
             if item.insumo.estoque_atual < item.qt_total_prevista:
@@ -110,7 +120,6 @@ def estornar_insumos_se_reabrir(sender, instance, **kwargs):
     estado_anterior = OrdemProducao.objects.get(pk=instance.pk)
 
     if estado_anterior.status == StatusOPEnum.CONCLUIDA and instance.status != StatusOPEnum.CONCLUIDA:
-
         if instance.status == StatusOPEnum.CANCELADA:
             return
 
@@ -145,10 +154,7 @@ def verificar_estoque_produto(sender, instance, **kwargs):
     total_requerido = total_em_ops + qtd_nova
 
     if total_requerido > estoque:
-        raise ValidationError(
-            f'Estoque insuficiente do produto {produto.modelo}. '
-            f'Disponível: {estoque} | Necessário considerando todas OPs: {total_requerido}'
-        )
+       instance.status = StatusOPEnum.BLOQUEADA
 
 @receiver(post_save, sender=OrdemProducao)
 def criar_op_produto(sender, instance, created, **kwargs):

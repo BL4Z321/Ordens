@@ -86,8 +86,12 @@
                 <h3>Canceladas</h3>
                 <p style="font-size: 2em;">{{ ordens_canceladas }}</p>
             </div>
-            
-            <br>
+
+            <div style="background: #da8505ff; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Bloqueadas</h3>
+                <p style="font-size: 2em;">{{ ordens_bloqueadas }}</p>
+            </div>
+
 
             <h2>Expedição</h2>
             <a href="{% url 'listar_expedicoes' %}" class="btn btn-outline-primary">Ver Expedições</a>

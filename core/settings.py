@@ -14,7 +14,9 @@ import os
 from pathlib import Path
 from django.contrib.messages import constants
 
+import insumos.apps
 import ordens_producao.apps
+import produtos.apps
 import usuarios.apps
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -56,8 +58,8 @@ INSTALLED_APPS = [
     # Apps do projeto
     'usuarios.apps.UsuariosConfig',
     'fornecedores',
-    'produtos',
-    'insumos',
+    'produtos.apps.ProdutosConfig',
+    'insumos.apps.InsumosConfig',
     'modelos_customizados',
     'ordens_producao.apps.OrdensProducaoConfig',
     'expedicao.apps.ExpedicaoConfig',

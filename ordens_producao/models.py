@@ -11,6 +11,7 @@ class StatusOPEnum(models.TextChoices):
     EM_PRODUCAO = 'em_producao', 'Em Produção'
     CONCLUIDA = 'concluida', 'Concluída'
     CANCELADA = 'cancelada', 'Cancelada'
+    BLOQUEADA = 'bloqueada', 'Bloqueada'
 
 class PrioridadeOPEnum(models.TextChoices):
     BAIXA = 'baixa', 'Baixa'

@@ -68,19 +68,6 @@ def sair(request):
     return redirect('login')
 
 @login_required
-def painel_gestor(request):
-    return render(request, 'ordens/gestor/dashboard')
-
-@login_required
-def painel_operador(request):
-    return render(request, 'operador.html')
-
-@login_required
-def painel_viewer(request):
-    return render(request, 'viewer.html')
-
-
-@login_required
 def dashboard(request):
     usuario = Usuario.objects.get(user=request.user)
 
@@ -92,6 +79,7 @@ def dashboard(request):
     ordens_concluidas = OrdemProducao.objects.filter(status=StatusOPEnum.CONCLUIDA).count()
     ordens_pendentes = OrdemProducao.objects.filter(status=StatusOPEnum.PENDENTE).count()
     ordens_canceladas = OrdemProducao.objects.filter(status=StatusOPEnum.CANCELADA).count()
+    ordens_bloqueadas = OrdemProducao.objects.filter(status=StatusOPEnum.BLOQUEADA).count()
 
     produtos_disponiveis = Produto.objects.count()
 
@@ -115,6 +103,7 @@ def dashboard(request):
         'ordens_concluidas': ordens_concluidas,
         'ordens_pendentes': ordens_pendentes,
         'ordens_canceladas': ordens_canceladas,
+        'ordens_bloqueadas': ordens_bloqueadas,
         'produtos_disponiveis': produtos_disponiveis,
         'modelos_custom': modelos_custom,
         'insumos_baixos': insumos_baixos,
@@ -128,3 +117,7 @@ def dashboard(request):
     }
 
     return render(request, 'gestor/dashboard.html', contexto)
+
+@login_required
+def painel_operador(request):
+    return render(request, 'operador/dashboard.html')
