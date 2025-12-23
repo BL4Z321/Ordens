@@ -1,33 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock title %}
 {% block body %}
-{% if messages %}
-    {% for message in messages %}
-        <section class="alert {{ message.tags }}">
-            {{ message }}
-        </section>
-    {% endfor %}
-{% endif %}
-<div style="max-width: 10%; margin: 0 auto; padding: 20px; margin-top: 350px;">
-    <h2>Login</h2>
-    
-    <form action="{% url 'login' %}" method="POST"> {% csrf_token %}
-        <div>
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+    <div style="max-width: 10%; margin: 0 auto; padding: 20px; margin-top: 350px;">
+        <h2>Login</h2>
+
+        <form action="{% url 'login' %}" method="POST"> {% csrf_token %}
             <div>
-                <label>Usuário: </label>
-                <input type="text" name="username" class="form-control" required>
+                <div>
+                    <label>Usuário: </label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <br>
+
+                <div>
+                    <label>Senha: </label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <br>
+                <div style="display: flex; justify-content: center;">
+                    <button type="submit" class="btn btn-outline-primary">Entrar</button>
+                </div>
             </div>
-            <br>
-    
-            <div>
-                <label>Senha: </label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <br>
-            <div style="display: flex; justify-content: center;">
-                <button type="submit" class="btn btn-outline-primary">Entrar</button>
-            </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 {% endblock body %}

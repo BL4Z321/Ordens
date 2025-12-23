@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Produção{% endblock title %}
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <section class="alert {{ message.tags }}">
+                {{ message }}
+            </section>
+        {% endfor %}
+    {% endif %}
+
+    <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+        <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(2, fr);">
+            <h1>Dashboard</h1>
+            <div style="display: flex; justify-content: space-between;">
+                <p>Bem-vindo, <strong>{{ usuario.user.username }}</strong></p>
+                <a href="{% url 'login' %}" class="btn btn-outline-danger">Sair</a>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px;">
+            <h2>Ordem de Produção</h2>
+            <a href="#" class="btn btn-outline-primary">Ver Ordens</a>
+
+             <div style="background: #17a2b8; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Total de Ordens</h3>
+                <p style="font-size: 2em;">{{ total_ordens }}</p>
+            </div>
+
+            <div style="background: #007bff; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Em Produção</h3>
+                <p style="font-size: 2em;">{{ ordens_ativas }}</p>
+            </div>
+
+            <div style="background: #28a745; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Concluidas</h3>
+                <p style="font-size: 2em;"> {{ ordens_concluidas }}</p>
+            </div>
+
+            <div style="background: #FFD700; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Pendentes</h3>
+                <p style="font-size: 2em;">{{ ordens_pendentes }}</p>
+            </div>
+
+            <div style="background: #dc3545; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Canceladas</h3>
+                <p style="font-size: 2em;">{{ ordens_canceladas }}</p>
+            </div>
+
+            <div style="background: #da8505ff; color: white; padding: 20px; border-radius: 8px;">
+                <h3>Bloqueadas</h3>
+                <p style="font-size: 2em;">{{ ordens_bloqueadas }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

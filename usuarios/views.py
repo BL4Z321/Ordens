@@ -21,9 +21,6 @@ def login_view(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        print(username)
-        print(password)
-
         user = authenticate(request, username=username, password=password)
         if user is not None:
             try:
@@ -47,7 +44,7 @@ def login_view(request):
                     return redirect('dashboard')
                 
                 elif usuario.role == RoleEnum.OPERADOR:
-                    return redirect('operador')
+                    return redirect('dash_operador')
                 
                 else:
                     return redirect('viewer')
@@ -68,7 +65,7 @@ def sair(request):
     return redirect('login')
 
 @login_required
-def dashboard(request):
+def dashboard_gestor(request):
     usuario = Usuario.objects.get(user=request.user)
 
     if usuario.role != RoleEnum.GESTOR:
@@ -119,5 +116,27 @@ def dashboard(request):
     return render(request, 'gestor/dashboard.html', contexto)
 
 @login_required
-def painel_operador(request):
-    return render(request, 'operador/dashboard.html')
+def dashboard_operador(request):
+    usuario = Usuario.objects.get(user=request.user)
+
+    if usuario.role != RoleEnum.OPERADOR:
+        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor.'})
+
+    total_ordens = OrdemProducao.objects.count()
+    ordens_ativas = OrdemProducao.objects.filter(status=StatusOPEnum.EM_PRODUCAO).count()
+    ordens_concluidas = OrdemProducao.objects.filter(status=StatusOPEnum.CONCLUIDA).count()
+    ordens_pendentes = OrdemProducao.objects.filter(status=StatusOPEnum.PENDENTE).count()
+    ordens_canceladas = OrdemProducao.objects.filter(status=StatusOPEnum.CANCELADA).count()
+    ordens_bloqueadas = OrdemProducao.objects.filter(status=StatusOPEnum.BLOQUEADA).count()
+
+    contexto = {
+        'usuario': usuario,
+        'total_ordens': total_ordens,
+        'ordens_ativas': ordens_ativas,
+        'ordens_concluidas': ordens_concluidas,
+        'ordens_pendentes': ordens_pendentes,
+        'ordens_canceladas': ordens_canceladas,
+        'ordens_bloqueadas': ordens_bloqueadas,
+    }
+
+    return render(request, 'operador/dashboard.html', contexto)

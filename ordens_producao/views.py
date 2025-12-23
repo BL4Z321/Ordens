@@ -163,3 +163,4 @@ def detalhes_ordem(request, pk):
         'historico': historico,
     }
     return render(request, 'gestor/detalhes_ordem.html', contexto)
+
