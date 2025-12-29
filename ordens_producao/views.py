@@ -159,8 +159,90 @@ def detalhes_ordem(request, pk):
     contexto = {
         'op': op,
         'insumos': insumos,
-        'op_produtos': op_produtos,  # NOME CORRIGIDO
+        'op_produtos': op_produtos,
         'historico': historico,
     }
     return render(request, 'gestor/detalhes_ordem.html', contexto)
 
+@login_required
+def producao_ordens(request):
+    usuario = Usuario.objects.get(user=request.user)
+    if usuario.role != RoleEnum.OPERADOR:
+        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor.'})
+
+    query = request.GET.get('q', '')
+    status_filtro = request.GET.get('status', '')
+    prioridade_filtro = request.GET.get('prioridade', '')
+
+    ordens = OrdemProducao.objects.all().order_by('-data_criacao')
+
+    if query:
+        ordens = ordens.filter(
+            Q(cod_op__icontains=query) |
+            Q(cliente__icontains=query) |
+            Q(modelo__nome__icontains=query)
+        )
+
+    if status_filtro:
+        ordens = ordens.filter(status=status_filtro)
+
+    if prioridade_filtro:
+        ordens = ordens.filter(prioridade=prioridade_filtro)
+
+    paginator = Paginator(ordens, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    contexto = {
+        'ordens': page_obj,
+        'page_obj': page_obj,
+        'query': query,
+        'status_filtro': status_filtro,
+        'prioridade_filtro': prioridade_filtro,
+        'status': StatusOPEnum.choices,
+        'prioridade': PrioridadeOPEnum.choices
+    }
+
+    return render(request, 'operador/producao_ordens.html', contexto)
+
+@login_required
+def producao_editar(request, pk):
+    usuarios = Usuario.objects.all()
+    ordem = get_object_or_404(OrdemProducao, pk=pk)
+
+    if request.method == 'POST':
+        ordem.status = request.POST.get('status')
+        responsavel_id = request.POST.get('responsavel')
+        ordem.responsavel = Usuario.objects.get(id=responsavel_id)
+
+        try:
+            ordem.save()
+            messages.add_message(request, constants.SUCCESS, f'Ordem {ordem.cod_op} atualizada com sucesso!')
+            return redirect('producao_ordens')
+
+        except ValidationError as ve:
+            messages.add_message(request, constants.ERROR, ve.message)
+            return redirect('producao_ordens')
+
+    contexto = {
+        'ordem': ordem,
+        'usuarios': usuarios,
+        'status': StatusOPEnum.choices,
+    }
+
+    return render(request, 'operador/producao_editar.html', contexto)
+
+@login_required
+def producao_detalhes(request, pk):
+    op = OrdemProducao.objects.get(id=pk)
+    insumos = OPInsumo.objects.filter(op=op).select_related('insumo')
+    op_produtos = OPProduto.objects.filter(op=op).select_related('produto')
+    historico = op.historicoop_set.all().order_by('-data_criacao') if hasattr(op, 'historicoop_set') else []
+
+    contexto = {
+        'op': op,
+        'insumos': insumos,
+        'op_produtos': op_produtos,
+        'historico': historico,
+    }
+    return render(request, 'operador/producao_detalhes.html', contexto)

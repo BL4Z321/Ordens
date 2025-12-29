@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Visualizar Ordens{% endblock title %}
+{% block title %}Ordens de Produção{% endblock title %}
 {% block body %}
     {% if messages %}
         {% for message in messages %}
@@ -10,10 +10,8 @@
     {% endif %}
     <div style="max-width: 1800px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
         <h2>Ordens de Produção</h2>
-
-        <form action="{% url 'listar_ordens' %}" method="GET" class="mb-3" style="padding: 10px;">
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
-            <a href="{% url 'criar_ordem' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Nova Ordem</a>
+        <form action="{% url 'producao_ordens' %}" method="GET" class="mb-3" style="padding: 10px;">
+            <a href="{% url 'dash_operador' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
             <input type="text" name="q" placeholder="Buscar..." value="{{query}}" />
 
             <select name="status">
@@ -91,9 +89,8 @@
                         </td>
                         <td>{{ op.modelo }}</td>
                         <td>
-                            <a href="{% url 'geditar_ordem' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
-                            <a href="{% url 'detalhes_ordem' op.id %}" class=" btn btn-outline-success"><i class="bi bi-layout-text-sidebar-reverse"></i></a> |
-                            <a href="{% url 'gexcluir_ordem' op.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a>
+                            <a href="{% url 'producao_editar' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
+                            <a href="{% url 'producao_detalhes' op.id %}" class=" btn btn-outline-success"><i class="bi bi-layout-text-sidebar-reverse"></i></a>
                         </td>
                     </tr>
                     {% empty%}
@@ -112,7 +109,7 @@
                             {% if status_filtro %}&status={{ status_filtro }}{% endif %}
                             {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
                         <i class="bi bi-chevron-double-left"></i>Primeiro</a>
-                    
+
                     <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.previous_page_number }}
                             {% if query %}&q={{ query }}{% endif %}
                             {% if status_filtro %}&status={{ status_filtro }}{% endif %}
@@ -128,7 +125,7 @@
                             {% if status_filtro %}&status={{ status_filtro }}{% endif %}
                             {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
                         Próxima<i class="bi bi-chevron-right"></i></a>
-                    
+
                     <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
                             {% if query %}&q={{ query }}{% endif %}
                             {% if status_filtro %}&status={{ status_filtro }}{% endif %}

@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load math_filters %}
+{% block title %}Detalhes Ordens{% endblock title %}
+{% block body %}
+<div style="max-width: 1800px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
+    <div style="display: flex; align-itens: center; gap: 1vh;">
+        <a href="{% url 'producao_ordens' %}" class="btn btn-outline-primary text-center"><i class="bi bi-arrow-left"></i></a>
+        <h3>Detalhes da Ordem de Produção #{{ op.cod_op }}</h3>
+    </div>
+
+    <br>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                Informações
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos" type="button" role="tab">
+                Recursos da Produção
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">
+                Histórico
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="info" role="tabpanel">
+            <div class="card p-3">
+                <h5>Informações Gerais</h5>
+                <hr>
+                <p><strong>Modelo:</strong> {{ op.modelo.nome }}</p>
+                <p><strong>Quantidade Pedida:</strong> {{ op.qtd_pedida }}</p>
+                <p><strong>Quantidade Produzida:</strong> {{ op.qtd_produzida }}</p>
+                <p><strong>Cliente:</strong> {{ op.cliente }}</p>
+                <p><strong>Data de Criação:</strong> {{ op.data_criacao }}</p>
+                <p><strong>Data de Inicio:</strong>
+                    {% if op.data_inicio %}
+                        {{ op.data_inicio }}
+                    {% else %}
+                        A definir
+                    {% endif %}
+                </p>
+                <p><strong>Data de Conclusão:</strong>
+                    {% if op.data_conslusao %}
+                        {{ op.data_conslusao }}
+                    {% else %}
+                        A definir
+                    {% endif %}
+                </p>
+                <p><strong>Data de Entrega:</strong> {{ op.data_entrega }}</p>
+                <p><strong>Status:</strong> {{ op.get_status_display }}</p>
+                <p><strong>Prioridade:</strong> {{ op.get_prioridade_display }}</p>
+                <p><strong>Observações:</strong>
+                    {% if op.observacoes %}
+                        {{ op.observacoes }}
+                    {% else %}
+                        Nenhuma
+                    {% endif %}
+                </p>
+                <p><strong>Responsável:</strong>
+                    {% if op.responsavel %}
+                        {{ op.responsavel }}
+                    {% else %}
+                        Aguardando Operador
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="recursos" role="tabpanel">
+            <div class="card p-3">
+                <h5>Equipamento Utilizado</h5>
+                <hr>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Tipo</th>
+                            <th>Tecnologia</th>
+                            <th>Estoque Atual</th>
+                            <th>Quantidade Necessária</th>
+                            <th>Total a ser Usado</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produto in op_produtos %}
+                            <tr>
+                                <td>{{ produto.produto.modelo }}</td>
+                                <td>{{ produto.produto.get_tipo_display }}</td>
+                                <td>{{ produto.produto.tecnologia }}</td>
+                                <td>{{ produto.produto.qtd_estoque_atual }}</td>
+                                <td>{{ produto.qtd_necessaria }}</td>
+                                <td>{{ produto.qtd_total }}</td>
+                                <td>
+                                    <span class="badge {{ produto.status_css }}">{{ produto.status_nome }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <br>
+
+            <div class="card p-3">
+                <h5>Insumos Utilizados</h5>
+                <hr>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Insumo</th>
+                            <th>Quantidade Necessária</th>
+                            <th>Unidade</th>
+                            <th>Estoque</th>
+                            <th>Total a ser Usado</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in insumos %}
+                        <tr>
+                            <td>{{ i.insumo.nome }}</td>
+                            <td>{{ i.qtd_necessaria_por_unidade }}</td>
+                            <td>{{ i.insumo.unidade_medida }}</td>
+                            <td>{{ i.insumo.estoque_atual }}</td>
+                            <td>{{ i.qt_total_prevista }}</td>
+                            <td>
+                                {% if i.qt_total_prevista > i.insumo.estoque_atual %}
+                                    <span class="text-danger fw-bold">
+                                        {{ i.qt_total_prevista|subtract:i.insumo.estoque_atual }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-success">Ok</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Nenhum insumo cadastrado para esta OP.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="history" role="tabpanel">
+            <div class="card p-3">
+                <h5>Histórico da OP</h5>
+                <hr>
+
+                {% if historico %}
+                <ul class="list-group">
+                    {% for h in historico %}
+                        <li class="list-group-item">
+                            <strong>{{ h.data_criacao }}:</strong> {{ h.descricao }}
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p class="text-muted">Nenhum histórico registrado!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

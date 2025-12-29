@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Editar Ordem{% endblock title %}
+{% block body %}
+<div style="max-width: 700px; margin: 0 auto; padding: 20px; margin-top: 10vh;">
+    <h1>Editar Ordem: <i>{{ ordem.cod_op }}</i></h1>
+
+    <form method="POST"> {% csrf_token %}
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+            {% for value, label in status %}
+                <option value="{{ value }}" {% if value == ordem.status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <label class="form-label">Observações</label>
+        <textarea name="obs" class="form-control">{{ ordem.observacoes}}</textarea>
+
+        <br>
+
+        <label class="form-label">Responsavel</label>
+        <select name="responsavel" class="form-select">
+            {% for u in usuarios %}
+                <option value="{{ u.id }}" {% if u == ordem.responsavel %}selected{% endif %}> {{ u.user.username }}</option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <div style="display: flex; justify-content: space-evenly;">
+            <button type="submit" class="btn btn-outline-success">Salvar</button>
+            <a href="{% url 'producao_ordens' %}" class="btn btn-outline-danger">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock body%}
