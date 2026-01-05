@@ -3,7 +3,7 @@ from ordens_producao.models import OrdemProducao
 
 # Create your models here.
 class ExpedicaoEnum(models.TextChoices):
-    EM_TRANSPORTE = 'em_transporte', 'Em tranporte'
+    EM_TRANSPORTE = 'em_transporte', 'Em Transporte'
     ENTREGUE = 'entregue', 'Entregue'
     RETORNADO = 'retornado', 'Retornado'
     ENVIADO = 'enviado', 'Enviado'

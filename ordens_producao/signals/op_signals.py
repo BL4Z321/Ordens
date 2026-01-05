@@ -181,7 +181,7 @@ def baixar_produto_estoque(sender, instance, created, **kwargs):
         produto.qtd_estoque_atual -= op_produto.qtd_total
         produto.save()
 
-@receiver(post_save, sender=OrdemProducao)
+@receiver(pre_save, sender=OrdemProducao)
 def estornar_produto_se_reabrir(sender, instance, **kwargs):
     if not instance.pk:
         return
