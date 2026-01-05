@@ -180,3 +180,23 @@ def baixar_produto_estoque(sender, instance, created, **kwargs):
 
         produto.qtd_estoque_atual -= op_produto.qtd_total
         produto.save()
+
+@receiver(post_save, sender=OrdemProducao)
+def estornar_produto_se_reabrir(sender, instance, **kwargs):
+    if not instance.pk:
+        return
+
+    estado_anterior = OrdemProducao.objects.get(pk=instance.pk)
+
+    if (
+            estado_anterior.status == StatusOPEnum.CONCLUIDA
+            and instance.status != StatusOPEnum.CONCLUIDA
+            and instance.status != StatusOPEnum.CANCELADA
+    ):
+        op_produto = instance.op_produto.first()
+        if not op_produto:
+            return
+
+        produto = op_produto.produto
+        produto.qtd_estoque_atual += op_produto.qtd_total
+        produto.save()
