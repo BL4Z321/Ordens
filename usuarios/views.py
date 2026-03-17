@@ -28,6 +28,7 @@ def login_view(request):
             except Usuario.DoesNotExist:
                 messages.add_message(request, constants.ERROR, 'Usuario não cadastrado.')
                 return redirect('login')
+            
             if usuario.ativo:
                 login(request, user)
                 messages.add_message(request, constants.SUCCESS, f'Bem-vindo, {user.username}')

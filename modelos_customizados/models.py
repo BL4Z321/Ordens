@@ -6,6 +6,7 @@ from produtos.models import Produto
 class ModeloEnum(models.TextChoices):
     T1000 = 'T1000'
     T1000C = 'T1000C'
+    T1000D = 'T1000D'
     T1000E = 'T1000E'
     T1000G = 'T1000G'
     T1000M = 'T1000M'

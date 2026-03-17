@@ -9,48 +9,105 @@
         {% endfor %}
     {% endif %}
 
-    <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
-        <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(2, fr);">
-            <h1>Dashboard</h1>
-            <div style="display: flex; justify-content: space-between;">
-                <p>Bem-vindo, <strong>{{ usuario.user.username }}</strong></p>
-                <a href="{% url 'login' %}" class="btn btn-outline-danger">Sair</a>
+    <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+        <div class="d-flex justify-content-between align-items-start mt-4">
+            <div>
+                <h1>Dashboard</h1>
+                <p class="mb-1">Bem-vindo, <strong>{{ usuario.user.username }}</strong></p>
+            </div>
+            <a href="{% url 'login' %}" class="btn btn-outline-danger">Sair</a>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 d-flex justify-content-between align-items-center mb-3">
+                <h2 class="m-0">Ordem de Produção</h2>
+                <a href="{% url 'producao_ordens' %}" class="btn btn-outline-primary">Ver Ordens</a>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px;">
-            <h2>Ordem de Produção</h2>
-            <a href="{% url 'producao_ordens' %}" class="btn btn-outline-primary">Ver Ordens</a>
-
-             <div style="background: #17a2b8; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Total de Ordens</h3>
-                <p style="font-size: 2em;">{{ total_ordens }}</p>
+        <div class="row g-3 mt-2">
+            <div class="col-md-6">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#17a2b8; color:white;">
+                            <h5>Total de Ordens</h5>
+                            <p class="fs-2 mb-0">{{ total_ordens|default:0 }}</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#007bff; color:white;">
+                            <h5>Em Produção</h5>
+                            <p class="fs-2 mb-0">{{ ordens_ativas|default:0 }}</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#28a745; color:white;">
+                            <h5>Concluídas</h5>
+                            <p class="fs-2 mb-0">{{ ordens_concluidas|default:0 }}</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#FFD700; color:white;">
+                            <h5>Pendentes</h5>
+                            <p class="fs-2 mb-0">{{ ordens_pendentes|default:0 }}</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#dc3545; color:white;">
+                            <h5>Canceladas</h5>
+                            <p class="fs-2 mb-0">{{ ordens_canceladas|default:0 }}</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#da8505ff; color:white;">
+                            <h5>Bloqueadas</h5>
+                            <p class="fs-2 mb-0">{{ ordens_bloqueadas|default:0 }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div style="background: #007bff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Em Produção</h3>
-                <p style="font-size: 2em;">{{ ordens_ativas }}</p>
-            </div>
-
-            <div style="background: #28a745; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Concluidas</h3>
-                <p style="font-size: 2em;"> {{ ordens_concluidas }}</p>
-            </div>
-
-            <div style="background: #FFD700; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Pendentes</h3>
-                <p style="font-size: 2em;">{{ ordens_pendentes }}</p>
-            </div>
-
-            <div style="background: #dc3545; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Canceladas</h3>
-                <p style="font-size: 2em;">{{ ordens_canceladas }}</p>
-            </div>
-
-            <div style="background: #da8505ff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Bloqueadas</h3>
-                <p style="font-size: 2em;">{{ ordens_bloqueadas }}</p>
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h5>Distribuição de Ordens</h5>
+                    <canvas id="ordensChart" width="400" height="300"></canvas>
+                </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function(){
+            const ctx = document.getElementById('ordensChart').getContext('2d');
+            const data = {
+                labels: ['Total', 'Em Produção', 'Concluídas', 'Pendentes', 'Canceladas', 'Bloqueadas'],
+                datasets: [{
+                    label: 'Ordens',
+                    data: [
+                        {{ total_ordens|default:0 }},
+                        {{ ordens_ativas|default:0 }},
+                        {{ ordens_concluidas|default:0 }},
+                        {{ ordens_pendentes|default:0 }},
+                        {{ ordens_canceladas|default:0 }},
+                        {{ ordens_bloqueadas|default:0 }}
+                    ],
+                    backgroundColor: ['#17a2b8','#007bff','#28a745','#FFD700','#dc3545','#da8505ff'],
+                    borderColor: ['rgba(23,162,184,0.9)','rgba(0,123,255,0.9)','rgba(40,167,69,0.9)','rgba(255,215,0,0.9)','rgba(220,53,69,0.9)','rgba(218,133,5,0.9)'],
+                    borderWidth: 1
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        })();
+    </script>
 {% endblock %}
