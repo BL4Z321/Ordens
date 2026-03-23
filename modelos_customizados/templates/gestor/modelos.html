@@ -11,10 +11,10 @@
     
     <div style="max-width: 1200px; margin: 0 auto; padding: 20px; margin-top: 1vh">
         <h2>Modelos</h2>
-        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
-        <a href="{% url 'criar_modelo' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Novo Produto</a>
-
         <form action="{% url 'listar_modelos' %}" method="GET" class="mb-3" style="padding: 10px;">{% csrf_token %}
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
+            <a href="{% url 'criar_modelo' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Novo Modelo</a>
+
             <input type="text" name="q" placeholder="Buscar..." value="{{ query }}">
 
             <select style="width: 200px; height: 30; font-size: 16px;" name="ativo">

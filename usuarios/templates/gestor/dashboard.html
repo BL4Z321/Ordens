@@ -1,130 +1,177 @@
 {% extends "base.html" %}
 {% block title %}Gerência{% endblock title %}
+
 {% block body %}
+
+<div class="container mt-4">
+
     {% if messages %}
         {% for message in messages %}
-            <section class="alert {{ message.tags }}">
+            <div class="alert {{ message.tags }}">
                 {{ message }}
-            </section>
+            </div>
         {% endfor %}
     {% endif %}
-    <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
-        <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(2, fr);">
-            <h1>Dashboard</h1>
-            <div style="display: flex; justify-content: space-between;">
-                <p>Bem-vindo, <strong>{{ usuario.user.username }}!</strong></p>
-                <a href="{% url 'login' %}" class="btn btn-outline-danger">Sair</a>
+
+    <div class="row g-4">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Dashboard</a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSistema">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSistema">
+                    <ul class="navbar-nav mx-auto gap-4">
+                        <li class="nav-item">
+                            <a class="nav-link px-2" href="{% url 'listar_estoque' %}">
+                                Estoque
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link px-2" href="{% url 'listar_produtos' %}">
+                                Produtos
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link px-2" href="{% url 'listar_modelos'%}">
+                                Modelos
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link px-2" href="{% url 'listar_insumos' %}">
+                                Insumos
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link px-2" href="{% url 'listar_ordens' %}">
+                                Ordens
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link px-2" href="{% url 'listar_expedicoes' %}">
+                                Expedição
+                            </a>
+                        </li>
+                    </ul>
+
+                    <span class="navbar-text me-3">
+                        {{ usuario.user.username }}
+                    </span>
+
+                    <a href="{% url 'sair' %}" class="btn btn-outline-danger">
+                        Sair
+                    </a>
+            </div>
+        </nav>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Ordens de Produção</h5>
+                    <canvas id="graficoOrdens"></canvas>
+                </div>
             </div>
         </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px;">
 
-            <h2>Estoque</h2>
-            <a href="{% url 'listar_estoque' %}" class="btn btn-outline-primary">Ver estoque</a>
-
-            <div style="background: #007bff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Estoque</h3>
-                <p style="font-size: 2em;"> {{ estoque }}</p>
-            </div>
-
-            <br>
-
-            <h2>Produtos</h2>
-            <a href="{% url 'listar_produtos' %}" class="btn btn-outline-primary">Ver Produtos</a>
-            
-            <div style="background: #17a2b8; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Produtos</h3>
-                <p style="font-size: 2em;">{{ produtos_disponiveis }}</p>
-            </div>
-
-            <br>
-
-            <h2>Modelos</h2>
-            <a href="{% url 'listar_modelos' %}" class="btn btn-outline-primary">Ver Modelos</a>
-
-            <div style="background: #007bff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Modelos Customizado</h3>
-                <p style="font-size: 2em;">{{ modelos_custom }}</p>
-            </div>
-
-            <br>
-
-            <h2>Insumos</h2>
-            <a href="{% url 'listar_insumos' %}" class="btn btn-outline-primary">Ver Insumos</a>
-            
-            <div style="background: #dc3545; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Insumos em Falta</h3>
-                <p style="font-size: 2em;">{{ insumos_baixos }}</p>
-            </div>
-            
-            <br>
-            
-            <h2>Ordem de Produção</h2>
-            <a href="{% url 'listar_ordens' %}" class="btn btn-outline-primary">Ver Ordens de Produção</a>
-                                    
-            <div style="background: #17a2b8; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Total de Ordens</h3>
-                <p style="font-size: 2em;">{{ total_ordens }}</p>
-            </div>
-
-            <div style="background: #007bff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Em Produção</h3>
-                <p style="font-size: 2em;">{{ ordens_ativas }}</p>
-            </div>
-
-            <div style="background: #28a745; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Concluidas</h3>
-                <p style="font-size: 2em;"> {{ ordens_concluidas }}</p>
-            </div>
-
-            <div style="background: #FFD700; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Pendentes</h3>
-                <p style="font-size: 2em;">{{ ordens_pendentes }}</p>
-            </div>
-
-            <div style="background: #dc3545; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Canceladas</h3>
-                <p style="font-size: 2em;">{{ ordens_canceladas }}</p>
-            </div>
-
-            <div style="background: #da8505ff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Bloqueadas</h3>
-                <p style="font-size: 2em;">{{ ordens_bloqueadas }}</p>
-            </div>
-
-
-            <h2>Expedição</h2>
-            <a href="{% url 'listar_expedicoes' %}" class="btn btn-outline-primary">Ver Expedições</a>
-           
-             <div style="background: #da8505ff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Total de Expedições</h3>
-                <p style="font-size: 2em;">{{ expedicao }}</p>
-            </div>
-
-            <div style="background: #17a2b8; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Em Transporte</h3>
-                <p style="font-size: 2em;">{{ expedi_transporte }}</p>
-            </div>
-
-            <div style="background: #007bff; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Entregue</h3>
-                <p style="font-size: 2em;">{{ expedi_entregue}}</p>
-            </div>
-            
-            <div style="background: #28a745; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Retornado</h3>
-                <p style="font-size: 2em;">{{ expedi_retornado }}</p>
-            </div>
-
-            <div style="background: #FFD700; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Enviado</h3>
-                <p style="font-size: 2em;">{{ expedi_enviado }}</p>
-            </div>
-
-            <div style="background: #dc3545; color: white; padding: 20px; border-radius: 8px;">
-                <h3>Pendente</h3>
-                <p style="font-size: 2em;">{{ expedi_pendente }}</p>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Expedição</h5>
+                    <canvas id="graficoExpedicao"></canvas>
+                </div>
             </div>
         </div>
+
+        <script>
+            const ctxOrdens = document.getElementById('graficoOrdens').get_context('2d');
+
+            new Chart(ctxOrdens, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Em produção',
+                        'Concluídas',
+                        'Pendentes',
+                        'Canceladas',
+                        'Bloqueadas'
+                    ],
+                    datasets: [{
+                       data: [
+                            {{ ordens_ativas|default:0 }},
+                            {{ ordens_concluidas|default:0 }},
+                            {{ ordens_pendentes|default:0 }},
+                            {{ ordens_canceladas|default:0 }},
+                            {{ ordens_bloqueadas|default:0 }}
+                        ],
+                        backgroundColor: [
+                            '#0d6efd',
+                            '#198754',
+                            '#ffc107',
+                            '#dc3545',
+                            '#da8505'
+                        ]
+                    }]
+                },
+                options:{
+                    reponsive: true,
+                    plugins: {
+                        lengend: { 
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            const ctxExpedicao = document.getElementById('graficoExpedicao').get_context('2d');
+
+            new Chart(ctxExpedicao, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Transporte',
+                        'Entregue',
+                        'Retornado',
+                        'Enviado',
+                        'Pendente'
+                    ],
+                    datasets: [{
+                        label: 'Status das Expedições',
+                        data: [
+                            {{ expedi_transporte|default:0 }},
+                            {{ expedi_entregue|default:0 }},
+                            {{ expedi_retornado|default:0 }},
+                            {{ expedi_enviado|default:0 }},
+                            {{ expedi_pendente|default:0 }}
+                        ],
+                        backgroundColor: [
+                            '#17a2b8',
+                            '#007bff',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ]
+                    }]
+                },
+                options:{
+                    responsive: true,
+                    plugins: {
+                        legend: { 
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        </script>
     </div>
+</div>
+
 {% endblock body %}
