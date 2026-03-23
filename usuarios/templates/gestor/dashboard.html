@@ -89,8 +89,9 @@
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            const ctxOrdens = document.getElementById('graficoOrdens').get_context('2d');
+            const ctxOrdens = document.getElementById('graficoOrdens').getContext('2d');
 
             new Chart(ctxOrdens, {
                 type: 'doughnut',
@@ -103,7 +104,7 @@
                         'Bloqueadas'
                     ],
                     datasets: [{
-                       data: [
+                        data: [
                             {{ ordens_ativas|default:0 }},
                             {{ ordens_concluidas|default:0 }},
                             {{ ordens_pendentes|default:0 }},
@@ -120,9 +121,9 @@
                     }]
                 },
                 options:{
-                    reponsive: true,
+                    responsive: true,
                     plugins: {
-                        lengend: { 
+                        legend: { 
                             display: true,
                             position: 'bottom'
                         }
@@ -130,7 +131,7 @@
                 }
             });
 
-            const ctxExpedicao = document.getElementById('graficoExpedicao').get_context('2d');
+            const ctxExpedicao = document.getElementById('graficoExpedicao').getContext('2d');
 
             new Chart(ctxExpedicao, {
                 type: 'bar',

@@ -86,23 +86,23 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         (function(){
             const ctx = document.getElementById('ordensChart').getContext('2d');
             const data = {
-                labels: ['Total', 'Em Produção', 'Concluídas', 'Pendentes', 'Canceladas', 'Bloqueadas'],
+                labels: ['Em Produção', 'Concluídas', 'Pendentes', 'Canceladas', 'Bloqueadas'],
                 datasets: [{
                     label: 'Ordens',
                     data: [
-                        {{ total_ordens|default:0 }},
                         {{ ordens_ativas|default:0 }},
                         {{ ordens_concluidas|default:0 }},
                         {{ ordens_pendentes|default:0 }},
                         {{ ordens_canceladas|default:0 }},
                         {{ ordens_bloqueadas|default:0 }}
                     ],
-                    backgroundColor: ['#17a2b8','#007bff','#28a745','#FFD700','#dc3545','#da8505ff'],
-                    borderColor: ['rgba(23,162,184,0.9)','rgba(0,123,255,0.9)','rgba(40,167,69,0.9)','rgba(255,215,0,0.9)','rgba(220,53,69,0.9)','rgba(218,133,5,0.9)'],
+                    backgroundColor: ['#007bff','#28a745','#FFD700','#dc3545','#da8505ff'],
+                    borderColor: ['rgba(0,123,255,0.9)','rgba(40,167,69,0.9)','rgba(255,215,0,0.9)','rgba(220,53,69,0.9)','rgba(218,133,5,0.9)'],
                     borderWidth: 1
                 }]
             };
