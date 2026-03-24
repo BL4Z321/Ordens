@@ -4,6 +4,7 @@ from modelos_customizados.models import Modelo
 from ordens_producao.models import OrdemProducao, PrioridadeOPEnum, StatusOPEnum, OPInsumo, OPProduto
 from produtos.models import Produto
 from usuarios.models import RoleEnum, Usuario
+from weasyprint import HTML
 
 from django.core.exceptions import ValidationError
 from datetime import date
@@ -13,6 +14,8 @@ from django.contrib import messages
 from django.contrib.messages import constants
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 
 @login_required
 def criar_ordem(request):
@@ -163,6 +166,32 @@ def detalhes_ordem(request, pk):
         'historico': historico,
     }
     return render(request, 'gestor/detalhes_ordem.html', contexto)
+
+@login_required
+def exportar_pdf(request, pk):
+
+    op = get_object_or_404(OrdemProducao, pk=pk)
+
+    insumos = OPInsumo.objects.filter(op=op).select_related('insumo')
+    produtos = OPProduto.objects.filter(op=op).select_related('produto')
+
+    contexto = {
+        'op': op,
+        'insumos': insumos,
+        'produtos': produtos
+    }
+
+    html_string = render_to_string(
+        'gestor/pdf_ordem.html',
+        contexto
+    )
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ordem_{op.cod_op}.pdf"'
+
+    HTML(string=html_string).write_pdf(response)
+
+    return response
 
 @login_required
 def producao_ordens(request):

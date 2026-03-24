@@ -7,6 +7,7 @@ urlpatterns = [
     path('gestor/editar_ordem/<int:pk>/', views.editar_ordem, name='geditar_ordem'),
     path('gestor/excluir_ordem/<int:pk>/', views.excluir_ordem, name='gexcluir_ordem'),
     path('gestor/detalhes_ordem/<int:pk>/', views.detalhes_ordem, name='detalhes_ordem'),
+    path('gestor/exportar_pdf/<int:pk>/', views.exportar_pdf, name='exportar_pdf'),
 
     path('operador/producao_ordens', views.producao_ordens, name='producao_ordens'),
     path('operador/producao_editar/<int:pk>/', views.producao_editar, name='producao_editar'),

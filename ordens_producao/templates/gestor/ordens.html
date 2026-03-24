@@ -93,7 +93,8 @@
                         <td>
                             <a href="{% url 'geditar_ordem' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
                             <a href="{% url 'detalhes_ordem' op.id %}" class=" btn btn-outline-success"><i class="bi bi-layout-text-sidebar-reverse"></i></a> |
-                            <a href="{% url 'gexcluir_ordem' op.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a>
+                            <a href="{% url 'gexcluir_ordem' op.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a> |
+                            <a href="{% url 'exportar_pdf' op.id %}" class="btn btn-outline-dark"><i class="bi bi-file-earmark-arrow-down"></i></a>
                         </td>
                     </tr>
                     {% empty%}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<style>
+
+body{
+    font-family: Arial;
+}
+
+h1{
+    text-align:center;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td, th{
+    border:1px solid #000;
+    padding:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Ordem de Produção</h1>
+
+<table>
+
+<tr>
+<th>Código</th>
+<td>{{ op.cod_op }}</td>
+</tr>
+
+<tr>
+<th>Cliente</th>
+<td>{{ op.cliente }}</td>
+</tr>
+
+<tr>
+<th>Modelo</th>
+<td>{{ op.modelo.nome }}</td>
+</tr>
+
+<tr>
+<th>Quantidade</th>
+<td>{{ op.qtd_pedida }}</td>
+</tr>
+
+<tr>
+<th>Status</th>
+<td>{{ op.get_status_display }}</td>
+</tr>
+
+<tr>
+<th>Prioridade</th>
+<td>{{ op.get_prioridade_display }}</td>
+</tr>
+
+<tr>
+<th>Data de Entrega</th>
+<td>{{ op.data_entrega }}</td>
+</tr>
+
+</table>
+
+<br>
+
+<h3>Insumos</h3>
+
+<table>
+
+<tr>
+<th>Insumo</th>
+<th>Quantidade</th>
+</tr>
+
+{% for i in insumos %}
+
+<tr>
+<td>{{ i.insumo.nome }}</td>
+<td>{{ i.qt_total_prevista }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>
