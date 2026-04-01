@@ -1,131 +1,108 @@
 {% extends 'base.html' %}
 {% block title %}
-  Dashboard
+Dashboard Viewer
 {% endblock %}
 
 {% block body %}
-  <div class="container mt-4">
-    <div class="row g-3">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Dashboard</a>
 
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSistema"><span class="navbar-toggler-icon"></span></button>
+  <style>
+    body{
+      background:#0f172a;
+      color:white;
+    }
 
-           <!-- BOTÕES DIREITA -->
-            <div class="d-flex align-items-center gap-2">
-              <span class="navbar-text text-grey">
-                {{ usuario.user.username }}
-              </span>
+    .dashboard-title{
+      font-size:40px;
+      font-weight:600;
+    }
 
-              <a id="exportBtn"
-                 class="btn btn-outline-success">
-                  Exportar PPTX
-              </a>
+    .metric-card{
+      border-radius:12px;
+      padding:20px;
+      text-align:center;
+    }
 
-                <a href="{% url 'sair' %}"
-                   class="btn btn-outline-danger">
-                    Sair
-                </a>
-            </div>
-        </div>
-      </nav>
+    .metric-card h6{
+      font-size:22px;
+      opacity:0.8;
+    }
 
-      <!-- CARDS -->
-      <div class="col-md-3">
-        <div class="card text-bg-primary shadow">
-          <div class="card-body">
-            <h6>Total Ordens</h6>
-            <h3>{{ metrics.total_ordens }}</h3>
-          </div>
+    .metric-card h1{
+      font-size:60px;
+      font-weight:700;
+    }
+
+    .card{
+      background:#1e293b;
+      border:none;
+    }
+
+    .chart-title{
+      font-size:22px;
+      font-weight:600;
+      margin-bottom:10px;
+      color:#e2e8f0 ;
+    }
+
+    .update-info{
+      font-size:14px;
+      opacity:0.7;
+    }
+  </style>
+
+  <div class="container-fluid p-4">
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="dashboard-title">📊 Dashboard</div>
+      <div class="update-info">Atualizado em: <span id="updateTime"></span></div>
+      <a class="btn btn-outline-danger ms-3" href="{% url 'sair' %}">Sair</a>
+    </div>
+    
+    <!-- CARDS PRINCIPAIS -->
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="metric-card bg-warning text-dark shadow">
+          <h6>Pendentes</h6>
+          <h1>{{ metrics.ordens_pendentes }}</h1>
         </div>
       </div>
-
-      <div class="col-md-3">
-        <div class="card text-bg-success shadow">
-          <div class="card-body">
-            <h6>Em Produção</h6>
-            <h3>{{ metrics.ordens_ativas }}</h3>
-          </div>
+      
+      <div class="col-md-4">
+        <div class="metric-card bg-success shadow">
+          <h6>Em Produção</h6>
+          <h1>{{ metrics.ordens_ativas }}</h1>
         </div>
       </div>
-
-      <div class="col-md-3">
-        <div class="card text-bg-warning shadow">
-          <div class="card-body">
-            <h6>Pendentes</h6>
-            <h3>{{ metrics.ordens_pendentes }}</h3>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card text-bg-dark shadow">
-          <div class="card-body">
-            <h6>Concluídas</h6>
-            <h3>{{ metrics.ordens_concluidas }}</h3>
-          </div>
+      
+      <div class="col-md-4">
+        <div class="metric-card bg-primary shadow">
+          <h6>Concluídas</h6>
+          <h1>{{ metrics.ordens_concluidas }}</h1>
         </div>
       </div>
     </div>
-
-    <!-- GRÁFICO PRINCIPAL -->
-    <div class="card mt-4 shadow">
-      <div class="card-body">
-        <h5>Visão Geral</h5>
-
-        <div style="height:350px">
-          <canvas id="graficoPrincipal"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-4">
+    
+        
+    <div class="row mt-5">
       <!-- ORDENS -->
-      <div class="col-md-6">
+      <div class="col-md-4">
         <div class="card shadow">
           <div class="card-body">
-            <h6>Ordens de Produção</h6>
-
-            <div style="height:250px">
+            <div class="chart-title">Distribuição das Ordens</div>
+            <div style="height:300px">
               <canvas id="graficoOrdens"></canvas>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- EXPEDIÇÃO -->
-      <div class="col-md-6">
+      <!-- MOdelos -->
+      <div class="col-md-4">
         <div class="card shadow">
           <div class="card-body">
-            <h6>Expedição</h6>
-
-            <div style="height:250px">
-              <canvas id="graficoExpedicao"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PRODUÇÃO VS EXPEDIÇÃO -->
-      <div class="col-md-6">
-        <div class="card shadow">
-          <div class="card-body">
-            <h6>Produção vs Expedição</h6>
-            <div style="height:250px">
-              <canvas id="graficoComparacao"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- DISTRIBUIÇÃO -->
-      <div class="col-md-6">
-        <div class="card shadow">
-          <div class="card-body">
-            <h6>Distribuição das Ordens</h6>
-            <div style="height:250px">
-              <canvas id="graficoRadar"></canvas>
+            <div class="chart-title">Modelos</div>
+            <div style="height:300px">
+              <canvas id="graficoModelos"></canvas>
             </div>
           </div>
         </div>
@@ -137,93 +114,75 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const metrics = {{ metrics_json|safe}};
-
-    document.getElementById("exportBtn").href = "{% url 'viewer_export_pptx' %}" + 
-    "?selected=total_ordens,ordens_ativas,ordens_concluidas,ordens_pendentes,ordens_canceladas" + "&chart=bar";
-
-
-    // gráfico principal
-    new Chart(document.getElementById("graficoPrincipal"), {
-      type: "bar",
-      data: {
-        labels: ["Ordens", "Em Produção", "Concluídas", "Pendentes", "Canceladas"],
-        datasets: [{
-          label: "Quantidade",
-          data: [metrics.total_ordens, metrics.ordens_ativas, metrics.ordens_concluidas, metrics.ordens_pendentes, metrics.ordens_canceladas],
-          backgroundColor: ["#0d6efd", "#198754", "#6c757d", "#ffc107", "#dc3545"]
-        }]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false
-      }
-    });
-
+    // atualizar horário
+    function updateClock(){
+      const now = new Date();
+      document.getElementById("updateTime").innerText = now.toLocaleTimeString();
+    }
+    
+    updateClock();
+    
     // gráfico ordens
     new Chart(document.getElementById("graficoOrdens"), {
       type:"doughnut",
       data:{
-        labels:["Produção", "Concluídas", "Pendentes", "Canceladas"],
+        labels:["Produção","Concluídas","Pendentes","Canceladas"],
         datasets:[{
           data:[metrics.ordens_ativas, metrics.ordens_concluidas, metrics.ordens_pendentes, metrics.ordens_canceladas],
-          backgroundColor:["#0d6efd", "#198754", "#ffc107", "#dc3545"]
+          backgroundColor:["#3b82f6", "#22c55e", "#facc15", "#ef4444"]
         }]
       },
       options:{
-        responsive:true
+        plugins:{
+          legend:{
+            labels:{
+              color:"white",
+              font:{size:16}
+            }
+          }
+        }
       }
     });
-
-    // gráfico expedição
-    new Chart(document.getElementById("graficoExpedicao"), {
-      type:"bar",
-      data:{
-        labels:["Transporte", "Entregue", "Retornado", "Enviado", "Pendente"],
-        datasets:[{
-          label:"Expedições",
-          data:[metrics.expedi_transporte, metrics.expedi_entregue, metrics.expedi_retornado, metrics.expedi_enviado, metrics.expedi_pendente],
-          backgroundColor:"#0dcaf0"
+    
+    new Chart(document.getElementById("graficoModelos"), {
+      type: "bar",
+      data: {
+        labels: ["T1000", "T1000C", "T1000D", "T1000E", "T1000G", "T1000M", "T1000S", "T1000X"],
+        datasets: [{
+          label: "Quantidade",
+          data: [metrics.modelo_t1000, metrics.modelo_t1000c, metrics.modelo_t1000d, metrics.modelo_t1000e, metrics.modelo_t1000g, metrics.modelo_t1000m, metrics.modelo_t1000s, metrics.modelo_t1000x],
+          backgroundColor: ["#3b82f6", "#22c55e", "#facc15", "#ef4444", "#14b8a6", "#a855f7", "#fb923c", "#06b6d4"]
         }]
       },
       options:{
         responsive:true,
-        maintainAspectRatio:false
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{
+            labels:{
+              color:"white",
+              font:{size:16}
+            }
+          }
+        },
+        scales:{
+          x:{
+            ticks:{
+              color:"white"
+            }
+          },
+          y:{
+            ticks:{
+              color:"white"
+            }
+          }
+        }
       }
     });
-
-    // PRODUÇÃO VS EXPEDIÇÃO
-    new Chart(document.getElementById("graficoComparacao"), {
-      type:"bar",
-      data:{
-        labels:["Ordens Ativas", "Ordens Concluídas", "Expedições Enviadas", "Expedições Entregues"],
-        datasets:[{
-          label:"Comparação",
-          data:[metrics.ordens_ativas, metrics.ordens_concluidas, metrics.expedi_enviado, metrics.expedi_entregue],
-          backgroundColor:["#0d6efd", "#198754", "#ffc107", "#20c997"]
-        }]
-      },
-      options:{
-        responsive:true,
-        maintainAspectRatio:false
-      }
-    });
-
-
-    // DISTRIBUIÇÃO RADAR
-    new Chart(document.getElementById("graficoRadar"), {
-      type:"radar",
-      data:{
-        labels:["Produção", "Concluídas", "Pendentes", "Canceladas"],
-        datasets:[{
-          label:"Distribuição",
-          data:[metrics.ordens_ativas, metrics.ordens_concluidas, metrics.ordens_pendentes, metrics.ordens_canceladas],
-          backgroundColor:"rgba(13,110,253,0.2)",
-          borderColor:"#0d6efd"
-        }]
-      },
-      options:{
-        responsive:true
-      }
-    });
+  
+    // AUTO REFRESH (30s)
+    setTimeout(() => {
+      location.reload();
+    },30000);
   </script>
 {% endblock %}
