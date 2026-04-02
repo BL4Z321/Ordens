@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.messages import constants
+from django.db.models import Count, Sum
 
 from estoque.models import ModeloInsumo
 from expedicao.models import Expedicao, ExpedicaoEnum
@@ -157,16 +158,16 @@ def dashboard_viewer(request):
     ordens_canceladas = OrdemProducao.objects.filter(status=StatusOPEnum.CANCELADA).count()
     ordens_bloqueadas = OrdemProducao.objects.filter(status=StatusOPEnum.BLOQUEADA).count()
 
-    modelo_total = Modelo.objects.count()
-    modelo_t1000 = Modelo.objects.filter(nome=ModeloEnum.T1000).count()
-    modelo_t1000c = Modelo.objects.filter(nome=ModeloEnum.T1000C).count()
-    modelo_t1000d = Modelo.objects.filter(nome=ModeloEnum.T1000D).count()
-    modelo_t1000e = Modelo.objects.filter(nome=ModeloEnum.T1000E).count()
-    modelo_t1000g = Modelo.objects.filter(nome=ModeloEnum.T1000G).count()
-    modelo_t1000m = Modelo.objects.filter(nome=ModeloEnum.T1000M).count()
-    modelo_t1000s = Modelo.objects.filter(nome=ModeloEnum.T1000S).count()
-    modelo_t1000x = Modelo.objects.filter(nome=ModeloEnum.T1000X).count()
-
+    modelos = (
+        OrdemProducao.objects
+        .values("modelo__nome")
+        .annotate(
+        total_ordens=Count("id"),
+        total_produzido=Sum("qtd_produzida")
+        )
+        .order_by("-total_ordens")
+    )
+    
     metrics = {
         'total_ordens': total_ordens,
         'ordens_ativas': ordens_ativas,
@@ -174,15 +175,7 @@ def dashboard_viewer(request):
         'ordens_pendentes': ordens_pendentes,
         'ordens_canceladas': ordens_canceladas,
         'ordens_bloqueadas': ordens_bloqueadas,
-        'modelo_total': modelo_total,
-        'modelo_t1000': modelo_t1000,
-        'modelo_t1000c': modelo_t1000c,
-        'modelo_t1000d': modelo_t1000d,
-        'modelo_t1000e': modelo_t1000e,
-        'modelo_t1000g': modelo_t1000g,
-        'modelo_t1000m': modelo_t1000m,
-        'modelo_t1000s': modelo_t1000s,
-        'modelo_t1000x': modelo_t1000x
+        'modelos': list(modelos),
     }
 
     contexto = {

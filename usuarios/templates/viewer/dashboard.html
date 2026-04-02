@@ -4,6 +4,13 @@ Dashboard Viewer
 {% endblock %}
 
 {% block body %}
+  {% if messages %}
+    {% for message in messages %}
+      <section class="alert {{ message.tags }}">
+        {{ message }}
+      </section>
+    {% endfor %}
+  {% endif %}
 
   <style>
     body{
@@ -54,8 +61,10 @@ Dashboard Viewer
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="dashboard-title">📊 Dashboard</div>
-      <div class="update-info">Atualizado em: <span id="updateTime"></span></div>
-      <a class="btn btn-outline-danger ms-3" href="{% url 'sair' %}">Sair</a>
+      <div class="d-flex align-items-center">
+        <div class="update-info">Atualizado em: <span id="updateTime"></span></div>
+        <a class="btn btn-outline-danger ms-3" href="{% url 'sair' %}">Sair</a>
+      </div>
     </div>
     
     <!-- CARDS PRINCIPAIS -->
@@ -84,12 +93,12 @@ Dashboard Viewer
     
         
     <div class="row mt-5">
-      <!-- ORDENS -->
-      <div class="col-md-4">
+      <!-- Ordens -->
+      <div class="col-md-6">
         <div class="card shadow">
           <div class="card-body">
-            <div class="chart-title">Distribuição das Ordens</div>
-            <div style="height:300px">
+            <div class="chart-title">Ordens Produzidas</div>
+            <div style="height:320px">
               <canvas id="graficoOrdens"></canvas>
             </div>
           </div>
@@ -97,16 +106,17 @@ Dashboard Viewer
       </div>
 
       <!-- MOdelos -->
-      <div class="col-md-4">
+      <div class="col-md-6">
         <div class="card shadow">
           <div class="card-body">
-            <div class="chart-title">Modelos</div>
-            <div style="height:300px">
+            <div class="chart-title">Modelos Produzidos</div>
+            <div style="height:320px">
               <canvas id="graficoModelos"></canvas>
             </div>
           </div>
         </div>
       </div>
+
 
     </div>
   </div>
@@ -114,6 +124,7 @@ Dashboard Viewer
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const metrics = {{ metrics_json|safe}};
+    
     // atualizar horário
     function updateClock(){
       const now = new Date();
@@ -122,36 +133,19 @@ Dashboard Viewer
     
     updateClock();
     
-    // gráfico ordens
     new Chart(document.getElementById("graficoOrdens"), {
       type:"doughnut",
       data:{
-        labels:["Produção","Concluídas","Pendentes","Canceladas"],
+        labels:["Produção","Concluídas","Pendentes","Canceladas","Bloqueadas"],
         datasets:[{
-          data:[metrics.ordens_ativas, metrics.ordens_concluidas, metrics.ordens_pendentes, metrics.ordens_canceladas],
-          backgroundColor:["#3b82f6", "#22c55e", "#facc15", "#ef4444"]
-        }]
-      },
-      options:{
-        plugins:{
-          legend:{
-            labels:{
-              color:"white",
-              font:{size:16}
-            }
-          }
-        }
-      }
-    });
-    
-    new Chart(document.getElementById("graficoModelos"), {
-      type: "bar",
-      data: {
-        labels: ["T1000", "T1000C", "T1000D", "T1000E", "T1000G", "T1000M", "T1000S", "T1000X"],
-        datasets: [{
-          label: "Quantidade",
-          data: [metrics.modelo_t1000, metrics.modelo_t1000c, metrics.modelo_t1000d, metrics.modelo_t1000e, metrics.modelo_t1000g, metrics.modelo_t1000m, metrics.modelo_t1000s, metrics.modelo_t1000x],
-          backgroundColor: ["#3b82f6", "#22c55e", "#facc15", "#ef4444", "#14b8a6", "#a855f7", "#fb923c", "#06b6d4"]
+          data:[
+            metrics.ordens_ativas,
+            metrics.ordens_concluidas,
+            metrics.ordens_pendentes,
+            metrics.ordens_canceladas,
+            metrics.ordens_bloqueadas
+          ],
+          backgroundColor:["#3b82f6", "#22c55e", "#facc15", "#ef4444", "#f97316"]
         }]
       },
       options:{
@@ -159,24 +153,46 @@ Dashboard Viewer
         maintainAspectRatio:false,
         plugins:{
           legend:{
+            position:'right',
             labels:{
               color:"white",
-              font:{size:16}
-            }
-          }
-        },
-        scales:{
-          x:{
-            ticks:{
-              color:"white"
-            }
-          },
-          y:{
-            ticks:{
-              color:"white"
+              font:{size:24},
+              boxWidth:20,
+              padding:15
             }
           }
         }
+      }
+    });
+    
+    const modelosLabels = metrics.modelos.map(m => m.modelo__nome);
+    const modelosData = metrics.modelos.map(m => m.total_ordens);
+    
+    // gráfico modelos
+    new Chart(document.getElementById("graficoModelos"), {
+      type: "doughnut",
+      data: {
+        labels: modelosLabels,
+        datasets: [{
+          label: "Ordens por Modelo",
+          data: modelosData,
+          backgroundColor: ["#3b82f6", "#22c55e", "#facc15", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316", "#eab308", "#0ea5e9"]
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{
+            position: 'right', // 🔥 legenda lateral
+            labels:{
+              color:"white",
+              font:{size:24},
+              boxWidth:20,
+              padding:15
+            }
+          }
+        },
       }
     });
   
