@@ -46,7 +46,7 @@ def editar_expedicao(request, pk):
         expedicao.data_entrega = request.POST.get('data_entrega')
         expedicao.transportadora = request.POST.get('transportadora')
         expedicao.cod_rastreio = request.POST.get('cod_rastreio')
-        expedicao.observacoes = request.POST.get('obs')
+        expedicao.observacoes = request.POST.get('observacoes')
 
         expedicao.save()
         messages.add_message(request, constants.SUCCESS, f'Expedição {expedicao.ordem.cod_op} atualizado com sucesso!')

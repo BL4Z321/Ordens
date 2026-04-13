@@ -1,96 +1,152 @@
 {% extends "base.html" %}
 {% block title %}Visualizar Produtos{% endblock title %}
+
 {% block body %}
+
+<div class="container mt-4">
+
     {% if messages %}
         {% for message in messages %}
-            <section class="alert {{ message.tags }}">
+            <div class="alert alert-{{ message.tags }}">
                 {{ message }}
-            </section>
+            </div>
         {% endfor %}
     {% endif %}
-    <div style="max-width: 1200px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
-        <h2>Produtos</h2>
-        <form action="{% url 'listar_produtos' %}" method="get" class="mb-3" style="padding: 10px;"> {% csrf_token %}
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
-            <a href="{% url 'criar_produto' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Novo Produto</a>
-            
-            <input type="text" name="q" placeholder="Buscar..." value="{{ query }}">
 
-            <select style="width: 200px; height: 30px; font-size: 16px;" name="ativo">
+    <h2 class="mb-4">Produtos</h2>
+
+    <!-- FORM -->
+    <form action="{% url 'listar_produtos' %}" method="get" class="row g-2 align-items-center mb-3">
+
+        <div class="col-auto">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="col-auto">
+            <a href="{% url 'criar_produto' %}" class="btn btn-outline-success">
+                <i class="bi bi-plus-circle"></i> Novo
+            </a>
+        </div>
+
+        <div class="col-md-3 col-12">
+            <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{ query }}">
+        </div>
+
+        <div class="col-md-1 col-6">
+            <select name="ativo" class="form-select">
                 <option value="">Todos</option>
                 {% for value, label in ativos %}
-                    <option value="{{ value }}" {% if value == ativo_filtro %}selected{% endif %}>{{ label }}</option>
+                    <option value="{{ value }}" {% if value == ativo_filtro %}selected{% endif %}>
+                        {{ label }}
+                    </option>
                 {% endfor %}
             </select>
+        </div>
 
-            <button type="submit" class="btn btn-outline-primary">Filtrar</button>
-        </form>
+        <div class="col-md-2 col-12">
+            <button type="submit" class="btn btn-outline-primary w-10">
+                Filtrar
+            </button>
+        </div>
 
+    </form>
 
-        <table class="table table-striped mt-4" border="1">
-            <thead>
+    <!-- TABELA -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
                 <tr>
                     <th>Modelo</th>
                     <th>Tipo</th>
                     <th>Tecnologia</th>
-                    <th>Descricao</th>
+                    <th>Descrição</th>
                     <th>Quantidade</th>
-                    <th>Ativo</th>
+                    <th>Status</th>
                     <th>Fornecedor</th>
                     <th>Ações</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for pro in produtos %}
                     <tr>
-                        <td>{{ pro.modelo }}</td>
+                        <td class="text-nowrap">{{ pro.modelo }}</td>
                         <td>{{ pro.get_tipo_display }}</td>
                         <td>{{ pro.get_tecnologia_display }}</td>
                         <td>{{ pro.descricao }}</td>
-                        <td>{{ pro.qtd_estoque_atual }}</td>
-                        <td>{% if pro.ativo %}Sim{%else%}Não{% endif %}</td>
-                        <td>{{ pro.fornecedor_id.nome }}</td>
+
+                        <!-- quantidade com destaque -->
                         <td>
-                            <a href="{% url 'geditar_produto' pro.id %}" class="btn btn-outline-primary"><i class="bi bi-pencil-square"></i></a> |
-                            <a href="{% url 'gexcluir_produto' pro.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a>
+                            {% if pro.qtd_estoque_atual < 5 %}
+                                <span class="badge bg-danger">{{ pro.qtd_estoque_atual }}</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ pro.qtd_estoque_atual }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- ativo -->
+                        <td>
+                            {% if pro.ativo %}
+                                <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inativo</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ pro.fornecedor_id.nome }}</td>
+
+                        <td class="d-flex gap-2">
+                            <a href="{% url 'geditar_produto' pro.id %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <a href="{% url 'gexcluir_produto' pro.id %}" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-ban"></i>
+                            </a>
                         </td>
                     </tr>
-                    {% empty %}
+                {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">Nenhum produto cadastrado!</td>
+                        <td colspan="8" class="text-center">
+                            Nenhum produto cadastrado!
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-
-        {% if page_obj.has_other_pages %}
-            <div style="margin-top: 15px; text-align: center;">
-                {% if page_obj.has_previous %}
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1"
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
-                        <i class="bi bi-chevron-double-left"></i>Primeira</a>
-                    
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.previous_page_number }}"
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
-                            <i class="bi bi-chevron-left"></i>Anterior</a>
-                {% endif %}
-
-                <span style="padding: 6px 12px; font-weight: bold;">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-
-                {% if page_obj.has_next %}
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.next_page_number }}"
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
-                        Próxima<i class="bi bi-chevron-right"></i></a>
-                    
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.paginator.num_pages }}"
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if ativo_filtro %}&ativo={{ ativo_filtro }}{% endif %}>
-                        Última <i class="bi bi-chevron-double-right"></i></a>
-                {% endif %}
-            </div>
-        {% endif %}
     </div>
+
+    <!-- PAGINAÇÃO -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">«</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">»</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
 {% endblock body %}

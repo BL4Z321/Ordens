@@ -18,7 +18,7 @@
         <label class="form-label">Ativo</label>
         <select name="ativo" class="form-select">
             {% for value, label in ativos %}
-                <option value="{{ value }}" {% if value == modelo.ativo %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ value }}" {% if value == modelo.ativo|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 
@@ -27,7 +27,7 @@
         <label class="form-label">Produto</label>
         <select name="produto" class="form-select">
             {% for pro in produtos %}
-                <option value="{{ pro.id }}" {% if pro == modelo.produtos %}selected{% endif %}>{{ pro.modelo }}</option>
+                <option value="{{ pro.id }}" {% if pro == modelo.produto_id %}selected{% endif %}>{{ pro.modelo }}</option>
             {% endfor %}
         </select>
 

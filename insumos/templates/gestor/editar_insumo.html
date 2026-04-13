@@ -32,7 +32,7 @@
         <label class="form-label">Ativo</label>
         <select name="ativo" class="form-select">
             {% for value, label in ativos %}
-                <option value="{{ value }}" {% if value == produto.ativo %}selected{% endif %}>{{ label }}</option>
+                <option value="{{ value }}" {% if value == insumo.ativo|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 

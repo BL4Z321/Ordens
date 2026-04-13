@@ -64,7 +64,6 @@ def login_view(request):
 @login_required
 def sair(request):
     logout(request)
-    messages.add_message(request, constants.INFO, 'Você saiu do sistema!')
     return redirect('login')
 
 @login_required

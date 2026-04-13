@@ -59,13 +59,14 @@ def criar_produto(request):
         tecnologia = request.POST.get('tecnologia')
         descricao = request.POST.get('descricao')
         qtd_estoque_atual = request.POST.get('qtd')
-        ativo  = request.POST.get('ativo')
+        ativo_raw = request.POST.get('ativo')
         fornecedor_id = request.POST.get('fornecedor')
         
-        if not all([modelo, tipo, tecnologia, qtd_estoque_atual, ativo, fornecedor_id]):
+        if not all([modelo, tipo, tecnologia, qtd_estoque_atual, ativo_raw, fornecedor_id]):
             messages.add_message(request, constants.ERROR, 'Preencha todos os campos obrigatórios!')
             return redirect('criar_produto')
         
+        ativo = True if ativo_raw == 'True' else False
         fornecedor = Fornecedore.objects.get(id=fornecedor_id)
 
         Produto.objects.create(
@@ -91,31 +92,38 @@ def criar_produto(request):
 
 @login_required
 def editar_produto(request, pk):
- produto = get_object_or_404(Produto, pk=pk)
- fornecedores = Fornecedore.objects.all()
+    produto = get_object_or_404(Produto, pk=pk)
+    fornecedores = Fornecedore.objects.all()
 
- if request.method == 'POST':
-     produto.modelo = request.POST.get('modelo')
-     produto.tipo = request.POST.get('tipo')
-     produto.tecnologia = request.POST.get('tecnologia')
-     produto.descricao = request.POST.get('descricao')
-     produto.qtd_estoque_atual = request.POST.get('qtd')
-     produto.ativo = request.POST.get('ativo')
-     produto.fornecedor = request.POST.get('fornecedor')
-     
-     produto.save()
-     messages.add_message(request, constants.SUCCESS, f'Produto {produto.modelo} atualizado com sucesso!')
-     return redirect('listar_produtos')
- 
- contexto = {
-     'produto': produto,
-     'tipos': TipoProdutoEnum.choices,
-     'tecnologias': TecnologiaProdutoEnum.choices,
-     'ativos': [('True', 'Ativo'), ('False', 'Inativo')],
-     'fornecedores': fornecedores
- }
+    if request.method == 'POST':
+        produto.modelo = request.POST.get('modelo')
+        produto.tipo = request.POST.get('tipo')
+        produto.tecnologia = request.POST.get('tecnologia')
+        produto.descricao = request.POST.get('descricao')
+        produto.qtd_estoque_atual = request.POST.get('qtd')
 
- return render(request, 'gestor/editar_produto.html', contexto)
+        ativo_raw = request.POST.get('ativo')
+        if ativo_raw in ('True', 'False'):
+            produto.ativo = (ativo_raw == 'True')
+
+        fornecedor_id = request.POST.get('fornecedor')
+        if fornecedor_id:
+            fornecedor = get_object_or_404(Fornecedore, pk=fornecedor_id)
+            produto.fornecedor_id = fornecedor
+        
+        produto.save()
+        messages.add_message(request, constants.SUCCESS, f'Produto {produto.modelo} atualizado com sucesso!')
+        return redirect('listar_produtos')
+    
+    contexto = {
+        'produto': produto,
+        'tipos': TipoProdutoEnum.choices,
+        'tecnologias': TecnologiaProdutoEnum.choices,
+        'ativos': [('True', 'Ativo'), ('False', 'Inativo')],
+        'fornecedores': fornecedores
+    }
+
+    return render(request, 'gestor/editar_produto.html', contexto)
 
 @login_required
 def excluir_produto(request, pk):

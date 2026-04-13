@@ -1,142 +1,199 @@
 {% extends "base.html" %}
 {% block title %}Visualizar Ordens{% endblock title %}
+
 {% block body %}
+<div class="container-fluid mt-4">
     {% if messages %}
         {% for message in messages %}
-            <section class="alert {{ message.tags }}">
+            <div class="alert {{ message.tags }}">
                 {{ message }}
-            </section>
+            </div>
         {% endfor %}
     {% endif %}
-    <div style="max-width: 1800px; margin: 0 auto; padding: 20px; margin-top: 1vh;">
-        <h2>Ordens de Produção</h2>
 
-        <form action="{% url 'listar_ordens' %}" method="GET" class="mb-3" style="padding: 10px;">
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
-            <a href="{% url 'criar_ordem' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Nova Ordem</a>
-            <input type="text" name="q" placeholder="Buscar..." value="{{query}}" />
+    <h2 class="mb-4">Ordens de Produção</h2>
 
-            <select name="status">
-                <option value="">Todos os status</option>
+    <!-- FORM -->
+    <form action="{% url 'listar_ordens' %}" method="GET" class="row g-2 align-items-center mb-3">
+        <div class="col-auto">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="col-auto">
+            <a href="{% url 'criar_ordem' %}" class="btn btn-outline-success">
+                <i class="bi bi-plus-circle"></i> Nova
+            </a>
+        </div>
+
+        <div class="col-md-3 col-12">
+            <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{query}}">
+        </div>
+
+        <div class="col-md-1 col-6">
+            <select name="status" class="form-select">
+                <option value="">Todos</option>
                 {% for value, label in status %}
-                    <option value="{{ value }}" {% if value == status_filtro %}selected{% endif %}>{{ label }}</option>
+                    <option value="{{ value }}" {% if value == status_filtro %}selected{% endif %}>
+                        {{ label }}
+                    </option>
                 {% endfor %}
             </select>
+        </div>
 
-            <select name="prioridade">
-                <option value="">Todas as prioridades</option>
+        <div class="col-md-1 col-6">
+            <select name="prioridade" class="form-select">
+                <option value="">Prioridade</option>
                 {% for value, label in prioridade %}
-                    <option value="{{ value }}" {% if value == prioridade_filtro %}selected{% endif %}>{{ label }}</option>
+                    <option value="{{ value }}" {% if value == prioridade_filtro %}selected{% endif %}>
+                        {{ label }}
+                    </option>
                 {% endfor %}
             </select>
+        </div>
 
-            <button class="btn btn-outline-primary" type="submit">Filtrar</button>
-        </form>
+        <div class="col-md-2 col-12">
+            <button class="btn btn-outline-primary w-10" type="submit">
+                Filtrar
+            </button>
+        </div>
+    </form>
 
-        <table class="table table-striped mt-4" border="1">
-            <thead>
+    <!-- TABELA -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
                 <tr>
                     <th>Código</th>
                     <th>Pedido</th>
                     <th>Produzido</th>
                     <th>Cliente</th>
-                    <th>Data Inicio</th>
-                    <th>Data Conclusão</th>
-                    <th>Data Entrega</th>
+                    <th>Início</th>
+                    <th>Conclusão</th>
+                    <th>Entrega</th>
                     <th>Status</th>
                     <th>Prioridade</th>
-                    <th>Observações</th>
-                    <th>Responsavel</th>
+                    <th>Responsável</th>
                     <th>Modelo</th>
                     <th>Ações</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for op in ordens %}
-                    <tr>
-                        <td>{{ op.cod_op }}</td>
-                        <td>{{ op.qtd_pedida }}</td>
-                        <td>{{ op.qtd_produzida }}</td>
-                        <td>{{ op.cliente }}</td>
-                        <td>
-                            {% if op.data_inicio %}
-                                {{ op.data_inicio }}
-                            {% else %}
-                                A definir
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if op.data_conclusao %}
-                                {{ op.data_conclusao }}
-                            {% else %}
-                                A definir
-                            {% endif %}
-                        </td>
-                        <td>{{ op.data_entrega }}</td>
-                        <td>{{ op.get_status_display }}</td>
-                        <td>{{ op.get_prioridade_display }}</td>
-                        <td>
-                            {% if op.observacoes %}
-                                {{ op.observacoes }}
-                            {% else %}
-                                Nenhuma
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if op.responsavel %}
-                                {{ op.responsavel }}
-                            {% else %}
-                                Aguardando Operador
-                            {% endif %}
-                        </td>
-                        <td>{{ op.modelo }}</td>
-                        <td>
-                            <a href="{% url 'geditar_ordem' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
-                            <a href="{% url 'detalhes_ordem' op.id %}" class=" btn btn-outline-success"><i class="bi bi-layout-text-sidebar-reverse"></i></a> |
-                            <a href="{% url 'gexcluir_ordem' op.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a> |
-                            <a href="{% url 'exportar_pdf' op.id %}" class="btn btn-outline-dark"><i class="bi bi-file-earmark-arrow-down"></i></a>
-                        </td>
-                    </tr>
-                    {% empty%}
-                    <tr>
-                        <td colspan="13" class="text-center">Nenhuma ordem cadastrada!</td>
-                    </tr>
+                <tr>
+                    <td class="text-nowrap">{{ op.cod_op }}</td>
+                    <td>{{ op.qtd_pedida }}</td>
+
+                    <!-- progresso -->
+                    <td>
+                        <span class="badge bg-secondary">
+                            {{ op.qtd_produzida }}
+                        </span>
+                    </td>
+
+                    <td>{{ op.cliente }}</td>
+
+                    <td>{{ op.data_inicio|default:"-" }}</td>
+                    <td>{{ op.data_conclusao|default:"-" }}</td>
+                    <td>{{ op.data_entrega }}</td>
+
+                    <!-- STATUS COLORIDO -->
+                    <td>
+                        {% if op.status == "em_producao" %}
+                            <span class="badge bg-primary">Em Produção</span>
+                        {% elif op.status == "concluida" %}
+                            <span class="badge bg-success">Concluída</span>
+                        {% elif op.status == "pendente" %}
+                            <span class="badge bg-warning text-dark">Pendente</span>
+                        {% elif op.status == "cancelada" %}
+                            <span class="badge bg-danger">Cancelada</span>
+                        {% elif op.status == "bloqueada" %}
+                            <span class="badge text-white" style="background:#da8505">Bloqueada</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ op.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- PRIORIDADE -->
+                    <td>
+                        {% if op.prioridade == 'baixa' %}
+                            <span class="badge bg-info">Baixa</span>
+                        {% elif op.prioridade == 'media' %}
+                            <span class="badge bg-warning text-dark">Média</span>
+                        {% elif op.prioridade == 'alta' %}
+                            <span class="badge text-dark" style="background:#FF8C00 ">Alta</span>
+                        {% elif op.prioridade == 'urgente' %}
+                            <span class="badge bg-danger">Urgente</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ op.responsavel|default:"-" }}
+                    </td>
+
+                    <td>{{ op.modelo }}</td>
+
+                    <!-- AÇÕES -->
+                    <td class="d-flex gap-2">
+                        <a href="{% url 'geditar_ordem' op.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+
+                        <a href="{% url 'detalhes_ordem' op.id %}" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-layout-text-sidebar-reverse"></i>
+                        </a>
+
+                        <a href="{% url 'gexcluir_ordem' op.id %}" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-ban"></i>
+                        </a>
+
+                        <a href="{% url 'exportar_pdf' op.id %}" class="btn btn-outline-dark btn-sm">
+                            <i class="bi bi-file-earmark-arrow-down"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="12" class="text-center">
+                        Nenhuma ordem cadastrada!
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
-
-        {% if page_obj.has_other_pages %}
-            <div style="margin-top: 15px; text-align: center;">
-                {% if page_obj.has_previous %}
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
-                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
-                        <i class="bi bi-chevron-double-left"></i>Primeiro</a>
-                    
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.previous_page_number }}
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
-                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
-                        <i class="bi bi-chevron-left"></i>Anterior</a>
-                {% endif %}
-
-                <span style="padding: 6px 12px; font-weight: bold;">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-
-                {% if page_obj.has_next %}
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page={{ page_obj.next_page_number }}
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
-                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
-                        Próxima<i class="bi bi-chevron-right"></i></a>
-                    
-                    <a style="padding: 6px 12px; border: 1px solid #ccc; margin: 0 3px; text-decoration: none; :hover background: #f0f0f0;" href="?page=1
-                            {% if query %}&q={{ query }}{% endif %}
-                            {% if status_filtro %}&status={{ status_filtro }}{% endif %}
-                            {% if prioridade_filtro %}&prioridade={{ prioridade_filtro }}{% endif %}">
-                        Último<i class="bi bi-chevron-double-right"></i></a>
-                {% endif %}
-            </div>
-        {% endif %}
     </div>
+
+    <!-- PAGINAÇÃO -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">«</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">»</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
 {% endblock body %}

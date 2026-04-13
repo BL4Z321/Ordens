@@ -51,8 +51,14 @@ def editar_modelo(request, pk):
     if request.method == 'POST':
         modelo.nome = request.POST.get('nome')
         modelo.descricao = request.POST.get('descricao')
-        modelo.ativo = request.POST.get('ativo')
-        modelo.produto = request.POST.get('produto')
+        ativo_raw = request.POST.get('ativo')
+        if ativo_raw in ('True', 'False'):
+            modelo.ativo = (ativo_raw == 'True')
+
+        produto_id = request.POST.get('produto')
+        if produto_id:
+            produto = get_object_or_404(Produto, pk=produto_id)
+            modelo.produto_id = produto
 
         modelo.save()
         messages.add_message(request, constants.SUCCESS, f'Modelo {modelo.nome} atualizado com sucesso!')
@@ -89,13 +95,14 @@ def criar_modelo(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         descricao = request.POST.get('descricao')
-        ativo = request.POST.get('ativo')
+        ativo_raw = request.POST.get('ativo')
         produto_id = request.POST.get('produto')
 
-        if not all([nome, ativo, produto_id]):
+        if not all([nome, ativo_raw, produto_id]):
             messages.add_message(request,constants.ERROR, 'Preencha todos os campos obrigatórios!')
             return redirect('listar_modelos')
 
+        ativo = True if ativo_raw == 'True' else False
         produto = Produto.objects.get(id=produto_id)
 
         Modelo.objects.create(

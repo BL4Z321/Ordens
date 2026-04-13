@@ -28,8 +28,8 @@ def listar_insumos(request):
     if tipo_filtro:
         insumos = insumos.filter(tipo=tipo_filtro)
 
-    if ativo_filtro:
-        insumos = insumos.filter(ativo=ativo_filtro)
+    if ativo_filtro in ('True', 'False'):
+        insumos = insumos.filter(ativo=(ativo_filtro == 'True'))
 
     paginator = Paginator(insumos, 10)
     page_number = request.GET.get('page')
@@ -57,19 +57,26 @@ def criar_insumo(request):
         tipo = request.POST.get('tipo')
         estoque_atual = request.POST.get('qtd')
         unidade_medida = request.POST.get('um')
-        ativo = request.POST.get('ativo')
+        ativo_raw = request.POST.get('ativo')
 
         if not all([nome, tipo, estoque_atual, unidade_medida]):
             messages.add_message(request, constants.WARNING, 'Preencha todos os campos obrigatorios!')
             return redirect('criar_insumo')
 
-        Insumo.objects.create(
-            nome=nome,
-            tipo=tipo,
-            estoque_atual=estoque_atual,
-            unidade_medida=unidade_medida,
-            ativo=ativo
-        )
+        ativo = None
+        if ativo_raw in ('True', 'False'):
+            ativo = (ativo_raw == 'True')
+
+        insumo_data = {
+            'nome': nome,
+            'tipo': tipo,
+            'estoque_atual': estoque_atual,
+            'unidade_medida': unidade_medida,
+        }
+        if ativo is not None:
+            insumo_data['ativo'] = ativo
+
+        Insumo.objects.create(**insumo_data)
 
         messages.add_message(request, constants.SUCCESS, f'Insumo {nome} criado com sucesso!')
         return redirect('listar_insumos')
@@ -89,7 +96,9 @@ def editar_insumo(request, pk):
         insumo.tipo = request.POST.get('tipo')
         insumo.estoque_atual = request.POST.get('qtd')
         insumo.unidade_medida = request.POST.get('um')
-        insumo.ativo = request.POST.get('ativo')
+        ativo_raw = request.POST.get('ativo')
+        if ativo_raw in ('True', 'False'):
+            insumo.ativo = (ativo_raw == 'True')
 
         insumo.save()
         messages.add_message(request, constants.SUCCESS, f'Insumo {insumo.nome} atualizado com sucesso!')

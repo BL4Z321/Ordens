@@ -241,6 +241,7 @@ def producao_editar(request, pk):
 
     if request.method == 'POST':
         ordem.status = request.POST.get('status')
+        ordem.observacoes = request.POST.get('obs')
         responsavel_id = request.POST.get('responsavel')
         ordem.responsavel = Usuario.objects.get(id=responsavel_id)
 

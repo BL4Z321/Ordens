@@ -8,7 +8,7 @@
         <label class="form-label">Modelo</label>
         <select name="modelo" class="form-select">
             {% for m in modelos %}
-                <option value="{{ m.id }}">{{ m.nome }}</option>
+                <option value="{{ m.id }}" {% if m.id == estoque.modelo_id %}selected{% endif %}>{{ m.nome }}</option>
             {% endfor %}
         </select>
 
@@ -17,7 +17,7 @@
         <label class="form-label">Insumo</label>
         <select name="insumo" class="form-select">
             {% for i in insumos %}
-                <option value="{{ i.id }}">{{ i.nome }}</option>
+                <option value="{{ i.id }}" {% if i.id == estoque.insumo_id %}selected{% endif %}>{{ i.nome }}</option>
             {% endfor %}
         </select>
 

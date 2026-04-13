@@ -1,40 +1,70 @@
 {% extends "base.html" %}
 {% block title %}Listar Estoque{% endblock title %}
+
 {% block body %}
+
+<div class="container mt-4">
+
     {% if messages %}
         {% for message in messages %}
-            <section class="alert {{ message.tags }}">
+            <div class="alert alert-{{ message.tags }}">
                 {{ message }}
-            </section>
+            </div>
         {% endfor %}
     {% endif %}
 
-    <div style="max-width: 1200px; margin: 0 auto; padding: 20px; margin-bottom: 1vh;">
-        <h2>Estoque</h2>
+    <h2 class="mb-4">Estoque</h2>
 
-        <form action="{% url 'listar_estoque' %}" method="GET" class="mb-3" style="padding: 10px;">
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></a>
-            <a href="{% url 'criar_estoque' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle-dotted"></i> Novo Estoque</a>
+    <!-- FORM FILTRO -->
+    <form action="{% url 'listar_estoque' %}" method="GET" class="row g-2 align-items-center mb-3">
 
-            <select name="modelo">
+        <div class="col-auto">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </div>
+
+        <div class="col-auto">
+            <a href="{% url 'criar_estoque' %}" class="btn btn-outline-success">
+                <i class="bi bi-plus-circle"></i> Novo
+            </a>
+        </div>
+
+        <div class="col-md-2 col-6">
+            <select name="modelo" class="form-select">
                 <option value="">Todos os Modelos</option>
-                    {% for m in modelos %}
-                        <option value="{{ m.id }}" {% if m.id == modelo_filtro %}selected{% endif %}>{{ m.nome }}</option>
-                    {% endfor %}
-            </select>
-
-            <select name="insumo">
-                <option value="">Todos os Insumos</option>
-                {% for i in insumos %}
-                    <option value="{{ i.id }}" {% if i.id == insumo_filtro %}selected{% endif %}>{{ i.nome }}</option>
+                {% for m in modelos %}
+                    <option value="{{ m.id }}" {% if m.id|stringformat:"s" == modelo_filtro %}selected{% endif %}>
+                        {{ m.nome }}
+                    </option>
                 {% endfor %}
             </select>
+        </div>
 
-            <button type="submit" class="btn btn-outline-primary">Filtrar</button>
-        </form>
+        <div class="col-md-3 col-6">
+            <select name="insumo" class="form-select">
+                <option value="">Todos os Insumos</option>
+                {% for i in insumos %}
+                    <option value="{{ i.id }}" {% if i.id|stringformat:"s" == insumo_filtro %}selected{% endif %}>
+                        {{ i.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-        <table class="table table-striped mt-4" border="1">
-            <thead>
+        <div class="col-md-2 col-12">
+            <button type="submit" class="btn btn-outline-primary w-10">
+                Filtrar
+            </button>
+        </div>
+
+    </form>
+
+    <!-- TABELA RESPONSIVA -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+
+            <thead class="table-dark">
                 <tr>
                     <th>Modelo</th>
                     <th>Insumo</th>
@@ -42,23 +72,37 @@
                     <th>Ações</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for e in estoques %}
                     <tr>
-                        <td>{{ e.modelo }}</td>
-                        <td>{{ e.insumo }}</td>
+                        <td class="text-nowrap">{{ e.modelo }}</td>
+                        <td class="text-nowrap">{{ e.insumo }}</td>
                         <td>{{ e.qtd_por_unidade }}</td>
-                        <td>
-                            <a href="{% url 'editar_estoque' e.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
-                            <a href="{% url 'excluir_estoque' e.id %}" class="btn btn-outline-danger"><i class="bi bi-ban"></i></a>
+                        <td class="d-flex gap-2">
+
+                            <a href="{% url 'editar_estoque' e.id %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <a href="{% url 'excluir_estoque' e.id %}" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-ban"></i>
+                            </a>
+
                         </td>
                     </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="4" class="text-center">Nenhum estoque encontrado</td>
-                        </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            Nenhum estoque encontrado
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
+
         </table>
     </div>
+
+</div>
+
 {% endblock body %}

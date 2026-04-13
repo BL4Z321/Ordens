@@ -81,9 +81,16 @@ def editar_estoque(request, pk):
     insumos = Insumo.objects.all()
 
     if request.method == 'POST':
-        estoque.modelo = request.POST.get('modelo')
-        estoque.insumo = request.POST.get('insumo')
-        estoque.qtd_por_unidade = request.POST.get('qtd_por_unidade')
+        modelo_id = request.POST.get('modelo')
+        insumo_id = request.POST.get('insumo')
+        qtd = request.POST.get('qtd')
+
+        if modelo_id:
+            estoque.modelo_id = modelo_id
+        if insumo_id:
+            estoque.insumo_id = insumo_id
+        if qtd is not None:
+            estoque.qtd_por_unidade = qtd
 
         estoque.save()
         messages.add_message(request, constants.SUCCESS, f'Estoque {estoque.modelo} editado com sucesso!')
