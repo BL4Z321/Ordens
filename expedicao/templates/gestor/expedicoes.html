@@ -5,7 +5,7 @@
 <div class="container-fluid mt-4">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
+            <div class="alert {{ message.tags }}">
                 {{ message }}
             </div>
         {% endfor %}
@@ -25,7 +25,7 @@
             <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{ query }}">
         </div>
 
-        <div class="col-md-2 col-6">
+        <div class="col-md-1 col-6">
             <select name="status" class="form-select">
                 <option value="">Status</option>
                 {% for value, label in status %}
