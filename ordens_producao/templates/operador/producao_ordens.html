@@ -22,7 +22,7 @@
                 <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{query}}">
             </div>
 
-            <div class="col-md-3 col-6">
+            <div class="col-md-2 col-6">
                 <select name="status" class="form-select">
                     <option value="">Todos os status</option>
                     {% for value, label in status %}
@@ -31,7 +31,7 @@
                 </select>
             </div>
 
-            <div class="col-md-3 col-6">
+            <div class="col-md-2 col-6">
                 <select name="prioridade" class="form-select">
                     <option value="">Todas as prioridades</option>
                     {% for value, label in prioridade %}
@@ -41,7 +41,7 @@
             </div>
 
             <div class="col-md-2 col-12">
-                <button class="btn btn-outline-primary w-10" type="submit">
+                <button class="btn btn-outline-primary" type="submit">
                     Filtrar
                 </button>
             </div>
@@ -54,14 +54,12 @@
                     <tr>
                         <th>Código</th>
                         <th>Pedido</th>
-                        <th>Produzido</th>
                         <th>Cliente</th>
                         <th>Data Inicio</th>
                         <th>Data Conclusão</th>
                         <th>Data Entrega</th>
                         <th>Status</th>
                         <th>Prioridade</th>
-                        <th>Observações</th>
                         <th>Responsavel</th>
                         <th>Modelo</th>
                         <th>Ações</th>
@@ -72,32 +70,45 @@
                         <tr>
                             <td class="text-nowrap">{{ op.cod_op }}</td>
                             <td class="text-nowrap">{{ op.qtd_pedida }}</td>
-                            <td class="text-nowrap">{{ op.qtd_produzida }}</td>
                             <td class="text-nowrap">{{ op.cliente }}</td>
-                            <td class="text-nowrap">
-                                {% if op.data_inicio %}
-                                    {{ op.data_inicio }}
-                                {% else %}
-                                    A definir
-                                {% endif %}
-                            </td>
-                            <td class="text-nowrap">
-                                {% if op.data_conclusao %}
-                                    {{ op.data_conclusao }}
-                                {% else %}
-                                    A definir
-                                {% endif %}
-                            </td>
+                            <td>{{ op.data_inicio|default:"-" }}</td>
+                            <td>{{ op.data_conclusao|default:"-" }}</td>
+                            
                             <td class="text-nowrap">{{ op.data_entrega }}</td>
-                            <td class="text-nowrap">{{ op.get_status_display }}</td>
-                            <td class="text-nowrap">{{ op.get_prioridade_display }}</td>
+                            
                             <td class="text-nowrap">
-                                {% if op.observacoes %}
-                                    {{ op.observacoes }}
-                                {% else %}
-                                    Nenhuma
+                                {% if op.status == 'pendente' %}
+                                    <span class="badge bg-warning text-dark">Pendente</span>
+
+                                {% elif op.status == 'em_producao' %}
+                                    <span class="badge bg-primary">Em Produção</span>
+
+                                {% elif op.status == 'concluida' %}
+                                    <span class="badge bg-success">Concluída</span>
+
+                                {% elif op.status == 'cancelada' %}
+                                    <span class="badge bg-danger">Cancelada</span>
+
+                                {% elif op.status == 'bloqueada' %}
+                                    <span class="badge" style="background:#da8505">Bloqueada</span>
                                 {% endif %}
                             </td>
+                            
+                            <td class="text-nowrap">
+                                {% if op.prioridade == 'baixa' %}
+                                    <span class="badge bg-secondary">Baixa</span>
+
+                                {% elif op.prioridade == 'media' %}
+                                    <span class="badge bg-info text-dark">Média</span>
+
+                                {% elif op.prioridade == 'alta' %}
+                                    <span class="badge bg-warning text-dark">Alta</span>
+
+                                {% elif op.prioridade == 'urgente' %}
+                                    <span class="badge bg-danger">Urgente</span>
+                                {% endif %}
+                            </td>
+                            
                             <td class="text-nowrap">
                                 {% if op.responsavel %}
                                     {{ op.responsavel }}
@@ -107,7 +118,7 @@
                             </td>
                             <td class="text-nowrap">{{ op.modelo }}</td>
                             <td class="d-flex gap-2">
-                                <a href="{% url 'producao_editar' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> |
+                                <a href="{% url 'producao_editar' op.id %}" class="btn btn-outline-primary" ><i class="bi bi-pencil-square"></i></a> 
                                 <a href="{% url 'producao_detalhes' op.id %}" class=" btn btn-outline-success"><i class="bi bi-layout-text-sidebar-reverse"></i></a>
                             </td>
                         </tr>

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.messages import constants
 from django.db.models import Count, Sum
+from django.views.decorators.csrf import csrf_protect
 
 from estoque.models import ModeloInsumo
 from expedicao.models import Expedicao, ExpedicaoEnum
@@ -15,51 +16,46 @@ from usuarios.models import RoleEnum, Usuario
 
 import json
 
+@csrf_protect
 def login_view(request):
     if request.method == 'GET':
         return render(request, 'login.html')
-    
-    elif request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            try:
-                usuario = Usuario.objects.get(user=user)
-            except Usuario.DoesNotExist:
-                messages.add_message(request, constants.ERROR, 'Usuario não cadastrado.')
-                return redirect('login')
-            
-            if usuario.ativo:
-                login(request, user)
-                messages.add_message(request, constants.SUCCESS, f'Bem-vindo, {user.username}')
-                
-                if usuario.role == RoleEnum.ADMIN:
-                    if not user.is_staff:
-                        user.is_staff = True
-                        user.is_superuser = True
-                        user.save()
+    username = request.POST.get('username')
+    password = request.POST.get('password')
 
-                    return redirect('/admin/')
-                
-                elif usuario.role == RoleEnum.GESTOR:
-                    return redirect('dashboard')
-                
-                elif usuario.role == RoleEnum.OPERADOR:
-                    return redirect('dash_operador')
-                
-                elif usuario.role == RoleEnum.VIEWER:
-                    return redirect('viewer')
-                
-            else:
-                messages.add_message(request, constants.ERROR, 'Usuário inativo. Contate o administrador.')
-                return redirect('login')
-        else:
-            messages.add_message(request, constants.ERROR, 'Usuário ou senha inváidos.')
-            return redirect('login')
-        
-    return render(request, 'login.html')
+    if not username or not password:
+        messages.add_message(request, constants.ERROR, 'Preencha todos os campos.')
+        return redirect('login')
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is None:
+        messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos.')
+        return redirect('login')
+
+    try:
+        usuario = Usuario.objects.get(user=user)
+    except Usuario.DoesNotExist:
+        messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos.')
+        return redirect('login')
+
+    if not usuario.ativo:
+        messages.add_message(request, constants.ERROR, 'Usuário inativo. Contate o administrador.')
+        return redirect('login')
+
+    login(request, user)
+
+    if usuario.role == RoleEnum.ADMIN:
+        return redirect('admin:index')
+    elif usuario.role == RoleEnum.GESTOR:
+        return redirect('dashboard')
+    elif usuario.role == RoleEnum.OPERADOR:
+        return redirect('dash_operador')
+    elif usuario.role == RoleEnum.VIEWER:
+        return redirect('viewer')
+
+    return redirect('login')
     
 @login_required
 def sair(request):

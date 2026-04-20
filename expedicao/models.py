@@ -24,5 +24,5 @@ class Expedicao(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'Expedição {self.ordem.id} - {self.status}'
+        return f'Expedição {self.ordem.id} - {self.status} - {self.destino}'
     

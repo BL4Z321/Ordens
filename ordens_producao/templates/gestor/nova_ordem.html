@@ -52,7 +52,7 @@
                 <select name="modelo" class="form-control">
                     <option value="">Selecione...</option>
                     {% for m in modelos %}
-                        <option value="{{ m.id }}">{{ m.nome }}</option>
+                        <option value="{{ m.id }}">{{ m.nome }} - {{ m.produto_id.modelo }}</option>
                     {% endfor %}
                 </select>
             </div>

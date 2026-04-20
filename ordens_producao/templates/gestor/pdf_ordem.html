@@ -1,96 +1,83 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
+    <head>
+        <meta charset="utf-8">
+        <style>
+            body{
+                font-family: Arial;
+            }
 
-<style>
+            h1{
+                text-align:center;
+            }
 
-body{
-    font-family: Arial;
-}
+            table{
+                width:100%;
+                border-collapse:collapse;
+            }
 
-h1{
-    text-align:center;
-}
+            td, th{
+                border:1px solid #000;
+                padding:6px;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <h1>Ordem de Produção</h1>
+        <table>
+            <tr>
+                <th>Código</th>
+                <td>{{ op.cod_op }}</td>
+            </tr>
 
-table{
-    width:100%;
-    border-collapse:collapse;
-}
+            <tr>
+                <th>Cliente</th>
+                <td>{{ op.cliente }}</td>
+            </tr>
 
-td, th{
-    border:1px solid #000;
-    padding:6px;
-}
+            <tr>
+                <th>Modelo</th>
+                <td>{{ op.modelo.nome }}</td>
+            </tr>
 
-</style>
+            <tr>
+                <th>Quantidade</th>
+                <td>{{ op.qtd_pedida }}</td>
+            </tr>
 
-</head>
+            <tr>
+                <th>Status</th>
+                <td>{{ op.get_status_display }}</td>
+            </tr>
 
-<body>
+            <tr>
+                <th>Prioridade</th>
+                <td>{{ op.get_prioridade_display }}</td>
+            </tr>
 
-<h1>Ordem de Produção</h1>
+            <tr>
+                <th>Data de Entrega</th>
+                <td>{{ op.data_entrega }}</td>
+            </tr>
+        </table>
 
-<table>
+        <br>
 
-<tr>
-<th>Código</th>
-<td>{{ op.cod_op }}</td>
-</tr>
+        <h3>Insumos</h3>
 
-<tr>
-<th>Cliente</th>
-<td>{{ op.cliente }}</td>
-</tr>
+        <table>
+            <tr>
+                <th>Insumo</th>
+                <th>Quantidade</th>
+            </tr>
 
-<tr>
-<th>Modelo</th>
-<td>{{ op.modelo.nome }}</td>
-</tr>
-
-<tr>
-<th>Quantidade</th>
-<td>{{ op.qtd_pedida }}</td>
-</tr>
-
-<tr>
-<th>Status</th>
-<td>{{ op.get_status_display }}</td>
-</tr>
-
-<tr>
-<th>Prioridade</th>
-<td>{{ op.get_prioridade_display }}</td>
-</tr>
-
-<tr>
-<th>Data de Entrega</th>
-<td>{{ op.data_entrega }}</td>
-</tr>
-
-</table>
-
-<br>
-
-<h3>Insumos</h3>
-
-<table>
-
-<tr>
-<th>Insumo</th>
-<th>Quantidade</th>
-</tr>
-
-{% for i in insumos %}
-
-<tr>
-<td>{{ i.insumo.nome }}</td>
-<td>{{ i.qt_total_prevista }}</td>
-</tr>
-
-{% endfor %}
-
-</table>
-
-</body>
+            {% for i in insumos %}
+            <tr>
+                <td>{{ i.insumo.nome }}</td>
+                <td>{{ i.qt_total_prevista }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
 </html>

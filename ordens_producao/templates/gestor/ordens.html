@@ -67,7 +67,6 @@
                 <tr>
                     <th>Código</th>
                     <th>Pedido</th>
-                    <th>Produzido</th>
                     <th>Cliente</th>
                     <th>Início</th>
                     <th>Conclusão</th>
@@ -85,16 +84,7 @@
                 <tr>
                     <td class="text-nowrap">{{ op.cod_op }}</td>
                     <td>{{ op.qtd_pedida }}</td>
-
-                    <!-- progresso -->
-                    <td>
-                        <span class="badge bg-secondary">
-                            {{ op.qtd_produzida }}
-                        </span>
-                    </td>
-
                     <td>{{ op.cliente }}</td>
-
                     <td>{{ op.data_inicio|default:"-" }}</td>
                     <td>{{ op.data_conclusao|default:"-" }}</td>
                     <td>{{ op.data_entrega }}</td>
@@ -117,13 +107,16 @@
                     </td>
 
                     <!-- PRIORIDADE -->
-                    <td>
+                    <td class="text-nowrap">
                         {% if op.prioridade == 'baixa' %}
-                            <span class="badge bg-info">Baixa</span>
+                            <span class="badge bg-secondary">Baixa</span>
+
                         {% elif op.prioridade == 'media' %}
-                            <span class="badge bg-warning text-dark">Média</span>
+                            <span class="badge bg-info text-dark">Média</span>
+
                         {% elif op.prioridade == 'alta' %}
-                            <span class="badge text-dark" style="background:#FF8C00 ">Alta</span>
+                            <span class="badge bg-warning text-dark">Alta</span>
+
                         {% elif op.prioridade == 'urgente' %}
                             <span class="badge bg-danger">Urgente</span>
                         {% endif %}

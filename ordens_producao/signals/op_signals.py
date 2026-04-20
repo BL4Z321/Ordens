@@ -14,15 +14,40 @@ def gerar_insumos_automaticos(sender, instance, created, **kwargs):
     if not created:
         return
 
+    if  OPInsumo.objects.filter(op=instance).exists():
+        return
+    
     estrutura = ModeloInsumo.objects.filter(modelo=instance.modelo)
 
-    for item in estrutura:
-        qtd = Decimal(str(item.qtd_por_unidade or 0))
-        total = qtd * Decimal(instance.qtd_pedida)
+    REGRAS_QTD = {
+        'termo 40mm': Decimal('0.15'),
+        'termo 50mm': Decimal('0.15'),
+        'fio 110v/220v': Decimal('1'),
+        'fio 0,2mm vermelho 0.10m': Decimal('0.10'),
+        'fio 0,2mm preto 0.10m': Decimal('0.10'),
+        'fio 0,2mm vermelho 0.25m': Decimal('0.25'),
+        'fio 0,2mm preto 0.25m': Decimal('0.25'),
+        'fio 12v/60v': Decimal('0.50'),
+    }
 
-        if item.insumo.unidade_medida == 'metro':
-            qtd = Decimal('0.15')  # 15 cm em metros
-            total = qtd * Decimal(instance.qtd_pedida)
+    for item in estrutura:
+        qtd_base = Decimal(str(item.qtd_por_unidade or 0))
+        nome = item.insumo.nome.lower()
+
+        qtd = None
+
+        for chave, valor in REGRAS_QTD.items():
+            if chave in nome:
+                qtd = valor
+                break
+        
+        if qtd is None:
+            if item.insumo.unidade_medida == 'metro':
+                qtd = Decimal('0.15')
+            else:
+                qtd = qtd_base
+            
+        total = qtd * Decimal(instance.qtd_pedida)
 
         OPInsumo.objects.create(
             op=instance,
@@ -39,13 +64,36 @@ def validar_estoque_insumos(sender, instance, **kwargs):
 
     estrutura = ModeloInsumo.objects.filter(modelo=instance.modelo)
 
+    REGRAS_QTD = {
+        'termo 40mm': Decimal('0.15'),
+        'termo 50mm': Decimal('0.15'),
+        'fio 110v/220v': Decimal('1'),
+        'fio 0,2mm vermelho 0.10m': Decimal('0.10'),
+        'fio 0,2mm preto 0.10m': Decimal('0.10'),
+        'fio 0,2mm vermelho 0.25m': Decimal('0.25'),
+        'fio 0,2mm preto 0.25m': Decimal('0.25'),
+        'fio 12v/60v': Decimal('0.50'),
+    }
+
     for item in estrutura:
         insumo = item.insumo
+        nome = insumo.nome.lower()
 
-        if insumo.unidade_medida == 'metro':
-            qtd_por_un = Decimal('0.15')
-        else:
-            qtd_por_un = Decimal(str(item.qtd_por_unidade or 0))
+        qtd_base = Decimal(str(item.qtd_por_unidade or 0))
+        qtd_por_un = None
+
+        # aplica regra pelo nome
+        for chave, valor in REGRAS_QTD.items():
+            if chave in nome:
+                qtd_por_un = valor
+                break
+
+        # fallback (caso não encontre regra)
+        if qtd_por_un is None:
+            if insumo.unidade_medida == 'metro':
+                qtd_por_un = Decimal('0.15')  # mantém compatibilidade
+            else:
+                qtd_por_un = qtd_base
 
         qtd_nova_op = qtd_por_un * Decimal(instance.qtd_pedida)
 
@@ -56,7 +104,7 @@ def validar_estoque_insumos(sender, instance, **kwargs):
         estoque = Decimal(str(insumo.estoque_atual))
         total_requirido = total_reservado + qtd_nova_op
 
-        if  total_requirido > estoque:
+        if total_requirido > estoque:
             instance.status = StatusOPEnum.BLOQUEADA
             return
 
