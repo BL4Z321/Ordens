@@ -28,6 +28,11 @@ def gerar_insumos_automaticos(sender, instance, created, **kwargs):
         'fio 0,2mm vermelho 0.25m': Decimal('0.25'),
         'fio 0,2mm preto 0.25m': Decimal('0.25'),
         'fio 12v/60v': Decimal('0.50'),
+        'termo 30mm': Decimal('0.075'),
+        'termo 6mm vermelho': Decimal('0.02'),
+        'termo 6mm preto': Decimal('0.02'),
+        'dupla face stepdown': Decimal('0.04'),
+        'dupla face peça': Decimal('0.055'),
     }
 
     for item in estrutura:
@@ -44,6 +49,8 @@ def gerar_insumos_automaticos(sender, instance, created, **kwargs):
         if qtd is None:
             if item.insumo.unidade_medida == 'metro':
                 qtd = Decimal('0.15')
+            elif item.insumo.unidade_medida == 'grama':
+                qtd = Decimal('2')
             else:
                 qtd = qtd_base
             
@@ -65,7 +72,7 @@ def validar_estoque_insumos(sender, instance, **kwargs):
     estrutura = ModeloInsumo.objects.filter(modelo=instance.modelo)
 
     REGRAS_QTD = {
-        'termo 40mm': Decimal('0.15'),
+       'termo 40mm': Decimal('0.15'),
         'termo 50mm': Decimal('0.15'),
         'fio 110v/220v': Decimal('1'),
         'fio 0,2mm vermelho 0.10m': Decimal('0.10'),
@@ -73,6 +80,11 @@ def validar_estoque_insumos(sender, instance, **kwargs):
         'fio 0,2mm vermelho 0.25m': Decimal('0.25'),
         'fio 0,2mm preto 0.25m': Decimal('0.25'),
         'fio 12v/60v': Decimal('0.50'),
+        'termo 30mm': Decimal('0.08'),
+        'termo 6mm vermelho': Decimal('0.02'),
+        'termo 6mm preto': Decimal('0.02'),
+        'dupla face stepdown': Decimal('0.04'),
+        'dupla face peça': Decimal('0.06'),
     }
 
     for item in estrutura:
@@ -92,6 +104,8 @@ def validar_estoque_insumos(sender, instance, **kwargs):
         if qtd_por_un is None:
             if insumo.unidade_medida == 'metro':
                 qtd_por_un = Decimal('0.15')  # mantém compatibilidade
+            elif insumo.unidade_medida == 'grama':
+                qtd_por_un = Decimal('2')
             else:
                 qtd_por_un = qtd_base
 

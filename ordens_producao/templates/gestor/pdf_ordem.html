@@ -75,7 +75,7 @@
             {% for i in insumos %}
             <tr>
                 <td>{{ i.insumo.nome }}</td>
-                <td>{{ i.qt_total_prevista }}</td>
+                <td>{{ i.qt_total_prevista }} {% if i.insumo.unidade_medida == "metros" %}m{% elif i.insumo.unidade_medida == "unidades" %}unid.{% elif i.insumo.unidade_medida == "grama" %}g{% endif %}</td>
             </tr>
             {% endfor %}
         </table>
