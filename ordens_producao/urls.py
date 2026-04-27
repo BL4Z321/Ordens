@@ -8,6 +8,8 @@ urlpatterns = [
     path('gestor/excluir_ordem/<int:pk>/', views.excluir_ordem, name='gexcluir_ordem'),
     path('gestor/detalhes_ordem/<int:pk>/', views.detalhes_ordem, name='detalhes_ordem'),
     path('gestor/exportar_pdf/<int:pk>/', views.exportar_pdf, name='exportar_pdf'),
+    path('gestor/exportar_recursos_csv/<int:pk>/', views.exportar_recursos_csv, name='exportar_recursos_csv'),
+    path('gestor/exportar_recursos_excel/<int:pk>/', views.exportar_recursos_excel, name='exportar_recursos_excel'),
 
     path('operador/producao_ordens', views.producao_ordens, name='producao_ordens'),
     path('operador/producao_editar/<int:pk>/', views.producao_editar, name='producao_editar'),

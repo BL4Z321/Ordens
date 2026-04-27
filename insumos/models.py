@@ -14,6 +14,15 @@ class Insumo(models.Model):
     unidade_medida = models.CharField(max_length=20)
     ativo = models.BooleanField(default=True)
 
+    def get_unidade_abreviada(self):
+        if self.unidade_medida in ['metros', 'metro']:
+            return 'm'
+        elif self.unidade_medida in ['gramas', 'grama']:
+            return 'g'
+        elif self.unidade_medida in ['unidades', 'unidade']:
+            return 'unid.'
+        return ''
+
     def __str__(self):
         return self.nome
     

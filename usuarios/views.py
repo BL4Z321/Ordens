@@ -67,7 +67,7 @@ def dashboard_gestor(request):
     usuario = Usuario.objects.get(user=request.user)
 
     if usuario.role != RoleEnum.GESTOR:
-        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor.'})
+        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao usuário.'})
 
     total_ordens = OrdemProducao.objects.count()
     ordens_ativas = OrdemProducao.objects.filter(status=StatusOPEnum.EM_PRODUCAO).count()
@@ -118,7 +118,7 @@ def dashboard_operador(request):
     usuario = Usuario.objects.get(user=request.user)
 
     if usuario.role != RoleEnum.OPERADOR:
-        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor.'})
+        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao usuário.'})
 
     total_ordens = OrdemProducao.objects.count()
     ordens_ativas = OrdemProducao.objects.filter(status=StatusOPEnum.EM_PRODUCAO).count()
@@ -144,7 +144,7 @@ def dashboard_viewer(request):
     usuario = Usuario.objects.get(user=request.user)
 
     if usuario.role != RoleEnum.VIEWER:
-        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao gestor.'})
+        return render(request, 'login.html', {'mensagem': 'Acesso restrito ao usuário.'})
 
     total_ordens = OrdemProducao.objects.count()
     ordens_ativas = OrdemProducao.objects.filter(status=StatusOPEnum.EM_PRODUCAO).count()

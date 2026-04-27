@@ -47,9 +47,9 @@ def gerar_insumos_automaticos(sender, instance, created, **kwargs):
                 break
         
         if qtd is None:
-            if item.insumo.unidade_medida == 'metro':
+            if item.insumo.unidade_medida == 'metro' or item.insumo.unidade_medida == 'metros':
                 qtd = Decimal('0.15')
-            elif item.insumo.unidade_medida == 'grama':
+            elif item.insumo.unidade_medida == 'grama' or item.insumo.unidade_medida == 'gramas':
                 qtd = Decimal('2')
             else:
                 qtd = qtd_base

@@ -43,7 +43,7 @@
 
             <tr>
                 <th>Quantidade</th>
-                <td>{{ op.qtd_pedida }}</td>
+                <td>{{ op.qtd_pedida }} unid.</td>
             </tr>
 
             <tr>
@@ -75,7 +75,7 @@
             {% for i in insumos %}
             <tr>
                 <td>{{ i.insumo.nome }}</td>
-                <td>{{ i.qt_total_prevista }} {% if i.insumo.unidade_medida == "metros" %}m{% elif i.insumo.unidade_medida == "unidades" %}unid.{% elif i.insumo.unidade_medida == "grama" %}g{% endif %}</td>
+                <td>{{ i.qt_total_prevista }} {{ i.insumo.get_unidade_abreviada }}</td>
             </tr>
             {% endfor %}
         </table>
