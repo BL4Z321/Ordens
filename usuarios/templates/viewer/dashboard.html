@@ -30,12 +30,12 @@ Dashboard Viewer
     }
 
     .metric-card h6{
-      font-size:22px;
+      font-size:26px;
       opacity:0.8;
     }
 
     .metric-card h1{
-      font-size:60px;
+      font-size:80px;
       font-weight:700;
     }
 
@@ -54,6 +54,66 @@ Dashboard Viewer
     .update-info{
       font-size:14px;
       opacity:0.7;
+    }
+
+    .section-title{
+      font-size:32px;
+      font-weight:600;
+      margin-bottom:20px;
+      color:#e2e8f0;
+    }
+
+    .ordem-card{
+      background:#1e293b;
+      border-radius:14px;
+      padding:20px;
+      color:white;
+      box-shadow:0 4px 15px rgba(0,0,0,0.4);
+      transition:0.3s;
+      height:100%;
+    }
+
+    .ordem-card:hover{
+      transform:scale(1.03);
+    }
+
+    .op-codigo{
+      font-size:32px;
+      font-weight:700;
+    }
+
+    .op-info{
+      font-size:18px;
+      opacity:0.8;
+    }
+
+    .op-progress{
+      height:10px;
+      border-radius:10px;
+      background:#334155;
+      margin-top:10px;
+    }
+
+    .op-progress-bar{
+      height:10px;
+      border-radius:10px;
+      background:#22c55e;
+    }
+
+    .prioridade-urgente{
+      border-left:6px solid #ef4444;
+    }
+
+    .prioridade-alta{
+      border-left:6px solid #facc15;
+    }
+
+    .prioridade-media{
+      border-left:6px solid #3b82f6;
+    }
+
+    .prioridade-baixa{
+      border-left:6px solid #898989;
     }
   </style>
 
@@ -77,21 +137,20 @@ Dashboard Viewer
       </div>
       
       <div class="col-md-4">
-        <div class="metric-card bg-success shadow">
+        <div class="metric-card bg-success text-dark shadow">
           <h6>Em Produção</h6>
           <h1>{{ metrics.ordens_ativas }}</h1>
         </div>
       </div>
       
       <div class="col-md-4">
-        <div class="metric-card bg-primary shadow">
+        <div class="metric-card bg-primary text-dark shadow">
           <h6>Concluídas</h6>
           <h1>{{ metrics.ordens_concluidas }}</h1>
         </div>
       </div>
     </div>
     
-        
     <div class="row mt-5">
       <!-- Ordens -->
       <div class="col-md-6">
@@ -105,19 +164,51 @@ Dashboard Viewer
         </div>
       </div>
 
-      <!-- MOdelos -->
+      <!-- Modelos -->
       <div class="col-md-6">
         <div class="card shadow">
           <div class="card-body">
-            <div class="chart-title">Modelos Produzidos</div>
+            <div class="chart-title">Ordens por Modelo</div>
             <div style="height:320px">
               <canvas id="graficoModelos"></canvas>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
+    <div class="row mt-5">
+      <div class="col-12">
+        <div class="section-title">🚧 Ordens em Produção</div>
+      </div>
 
+      {% for ordem in ordens_em_producao %}
+        <div class="col-md-4 col-lg-3 mb-4">
+          
+          <div class="ordem-card 
+            {% if ordem.prioridade == 'urgente' %}prioridade-urgente
+            {% elif ordem.prioridade == 'alta' %}prioridade-alta
+            {% elif ordem.prioridade == 'media' %}prioridade-media
+            {% else %}prioridade-baixa
+            {% endif %}
+          ">
+
+            <!-- Código -->
+            <div class="op-codigo">{{ ordem.cod_op }}</div>
+
+            <!-- Cliente -->
+            <div class="op-info">👤 {{ ordem.cliente }}</div>
+
+            <!-- Modelo -->
+            <div class="op-info">📦 {{ ordem.modelo.nome }}</div>
+          </div>
+
+        </div>
+      {% empty %}
+        <div class="col-12 text-center" style="font-size:26px; opacity:0.6;">
+          Nenhuma ordem em produção
+        </div>
+      {% endfor %}
     </div>
   </div>
 

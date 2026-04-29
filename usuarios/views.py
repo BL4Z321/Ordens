@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_protect
 from estoque.models import ModeloInsumo
 from expedicao.models import Expedicao, ExpedicaoEnum
 from insumos.models import Insumo
-from modelos_customizados.models import Modelo, ModeloEnum
+from modelos_customizados.models import Modelo
 from ordens_producao.models import OrdemProducao, StatusOPEnum
 from produtos.models import Produto
 from usuarios.models import RoleEnum, Usuario
@@ -146,6 +146,9 @@ def dashboard_viewer(request):
     if usuario.role != RoleEnum.VIEWER:
         return render(request, 'login.html', {'mensagem': 'Acesso restrito ao usuário.'})
 
+
+    ordens_em_producao = OrdemProducao.objects.filter(status=StatusOPEnum.EM_PRODUCAO)
+
     total_ordens = OrdemProducao.objects.count()
     ordens_ativas = OrdemProducao.objects.filter(status=StatusOPEnum.EM_PRODUCAO).count()
     ordens_concluidas = OrdemProducao.objects.filter(status=StatusOPEnum.CONCLUIDA).count()
@@ -177,6 +180,7 @@ def dashboard_viewer(request):
         'usuario': usuario,
         'metrics_json': json.dumps(metrics),
         'metrics': metrics,
+        'ordens_em_producao': ordens_em_producao,
     }
 
     return render(request, 'viewer/dashboard.html', contexto)
