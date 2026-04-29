@@ -54,18 +54,3 @@ Funcionalidades:
 - Integração: Estoque + Produção
 
 Prioridade: 🔴 Alta (se produção depende de material)
-
-## 5️⃣ Sistema Financeiro
-
-Objetivo: controle de custos e resultados
-Funcionalidades básicas:
-
-- Contas a pagar
-- Contas a receber
-- Custos por ordem de produção
-- Relatórios financeiros simples
-- Fluxo de caixa
-
-Prioridade: 🔵 Média/Baixa (pode ser fase 2)
-
-## 6️⃣ Sistema Comercial
