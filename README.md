@@ -1,19 +1,6 @@
-﻿# 📌 Backlog organizado por módulos
+﻿# 📌 Backlog organizado por módulos
 
-## 1️⃣ Dashboard (Gestor e Operador)
-
-Objetivo: visão rápida da produção
-Sugestões de métricas:
-
-  - Ordens em aberto / concluídas / atrasadas
-  - Produção por período (dia, semana, mês)
-  - Tempo médio de produção
-  - Produtividade por operador
-  - Gráficos: barras, linhas e pizza
-
-Prioridade: 🔴 Alta (muito valor imediato)
-
-## 2️⃣ Relatórios Impressos
+## 1️⃣ Relatórios Impressos
 
 Objetivo: controle e auditoria
 Sugestões:
@@ -26,7 +13,7 @@ Sugestões:
 
 Prioridade: 🟠 Média
 
-## 3️⃣ Notificações Internas
+## 2️⃣ Notificações Internas
 
 Objetivo: agilidade e comunicação
 Exemplos:
@@ -41,7 +28,7 @@ Exemplos:
 
 Prioridade: 🟠 Média
 
-## 4️⃣ Sistema de Compras
+## 3️⃣ Sistema de Compras
 
 Objetivo: controle de materiais
 Funcionalidades:
