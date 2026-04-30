@@ -1,19 +1,6 @@
-﻿# 📌 Backlog organizado por módulos
+﻿# 📌 Backlog organizado por módulos
 
-## 1️⃣ Relatórios Impressos
-
-Objetivo: controle e auditoria
-Sugestões:
-
-  - Ordem de Produção (PDF)
-  - Relatório diário/mensal de produção
-  - Consumo de materiais
-  - Status das ordens
-  - Tecnologias comuns: PDF (ex: dompdf, jsPDF)
-
-Prioridade: 🟠 Média
-
-## 2️⃣ Notificações Internas
+## 1️⃣ Notificações Internas
 
 Objetivo: agilidade e comunicação
 Exemplos:
@@ -28,7 +15,7 @@ Exemplos:
 
 Prioridade: 🟠 Média
 
-## 3️⃣ Sistema de Compras
+## 2️⃣ Sistema de Compras
 
 Objetivo: controle de materiais
 Funcionalidades:
